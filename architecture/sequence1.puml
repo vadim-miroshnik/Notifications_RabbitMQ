@@ -1,0 +1,42 @@
+@startuml
+== Create group users (Создание группы пользователей) ==
+Admin -> AdminWebApp: create group of users
+activate Admin #gray
+activate AdminWebApp #gray
+AdminWebApp -> Postgres: save group
+activate Postgres #yellow
+Postgres --> AdminWebApp:
+deactivate Postgres
+AdminWebApp --> Admin
+deactivate AdminWebApp
+deactivate Admin
+
+== Send notifications (Отправка мгновенных уведомлений) ==
+Admin -> NotificationAPI: send notifications
+activate Admin #gray
+activate NotificationAPI #gray
+NotificationAPI -> Postgres: get data
+activate Postgres #yellow
+Postgres --> NotificationAPI:
+deactivate Postgres
+NotificationAPI -> MongoDB: create notifications
+activate MongoDB #yellow
+MongoDB --> NotificationAPI:
+deactivate MongoDB
+NotificationAPI -> RabbitMQ: push notifications
+activate RabbitMQ #green
+RabbitMQ --> NotificationAPI:
+NotificationAPI --> Admin:
+deactivate NotificationAPI
+deactivate Admin
+RabbitMQ -> Worker: gen and send messages
+activate Worker #red
+Worker -> NotificationAPI: return replies
+deactivate Worker
+activate NotificationAPI #grey
+NotificationAPI -> RabbitMQ: repeat notifications
+NotificationAPI -> MongoDB: update notifications
+activate MongoDB #yellow
+MongoDB --> NotificationAPI:
+deactivate MongoDB
+@enduml
