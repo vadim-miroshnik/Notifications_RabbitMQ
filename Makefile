@@ -1,6 +1,7 @@
 prepare_environment:
 	cp -r env.example .env
 	pip install -r admin_panel/requirements.txt
+	pip install -r notification_api/requirements.txt
 
 run_postgres:
 	docker compose up -d postgres pgadmin
@@ -15,6 +16,9 @@ drop_db:
 run_project:
 	python3 admin_panel/manage.py migrate
 	python3 admin_panel/manage.py runserver
+
+run_notification_container:
+	docker-compose up --build notification
 
 create_django_superuser:
 	python3 admin_panel/manage.py createsuperuser

@@ -20,6 +20,20 @@ services:
     build: ./admin_panel/
 
 
+  notification:
+    container_name: notification
+    image: notification
+    networks:
+      - movies
+    environment:
+      APP__JWT_SECRET_KEY: $APP__JWT_SECRET_KEY
+      APP__ALGORITHM: HS256
+      MONGO__HOST: mongos1
+      MONGO__PORT: 27017
+    env_file:
+      - .env
+
+
   postgres:
     container_name: postgres_container
     env_file:

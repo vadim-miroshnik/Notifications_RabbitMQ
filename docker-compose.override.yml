@@ -5,6 +5,11 @@ services:
     ports:
       - "5432:5432"
 
+  notification:
+    build: ./notification_api
+    ports:
+      - 8000:8000
+
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
