@@ -17,7 +17,7 @@ run_project:
 	python3 admin_panel/manage.py runserver
 
 create_django_superuser:
-	python admin_panel/manage.py createsuperuser
+	python3 admin_panel/manage.py createsuperuser
 
 initialize_mongo:
 	backoff/mongo/wait_for_up.sh
