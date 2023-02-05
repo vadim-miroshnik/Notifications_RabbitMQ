@@ -31,3 +31,6 @@ initialize_mongo:
 	docker exec -it mongos1 bash -c 'echo "sh.addShard(\"mongors2/mongors2n1\")" | mongosh'
 	docker exec -it mongors1n1 bash -c 'echo "use movies" | mongosh'
 	docker exec -it mongos1 bash -c 'echo "sh.enableSharding(\"movies\")" | mongosh'
+
+run_rabbit:
+	docker compose up -d rabbitmq

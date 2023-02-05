@@ -37,6 +37,13 @@ services:
       - movies
     restart: unless-stopped
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.11.8-management
+    networks:
+      - movies
+
+
 networks:
   movies:
     driver: bridge
