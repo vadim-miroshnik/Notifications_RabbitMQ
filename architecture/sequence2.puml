@@ -1,0 +1,46 @@
+@startuml
+== Enable/disable notifications (Включение/выключение рассылки пользователем) ==
+User -> NotificationAPI: enable/disable notifications
+activate User #gray
+activate NotificationAPI #gray
+NotificationAPI -> Postgres: update user profile
+activate Postgres #yellow
+Postgres --> NotificationAPI:
+deactivate Postgres
+NotificationAPI --> User
+deactivate NotificationAPI
+deactivate User
+
+== Send batch notifications (Отправка пачки уведомлений) ==
+Scheduler -> NotificationAPI: start mailing
+activate Scheduler #grey
+activate NotificationAPI #grey
+NotificationAPI --> Scheduler
+deactivate Scheduler
+NotificationAPI -> Postgres: get data for mailing
+activate Postgres #yellow
+Postgres --> NotificationAPI
+deactivate Postgres
+NotificationAPI -> MongoDB: get data for mailing
+activate MongoDB #yellow
+MongoDB --> NotificationAPI
+NotificationAPI -> MongoDB: save notifications
+MongoDB --> NotificationAPI
+deactivate MongoDB
+
+NotificationAPI -> RabbitMQ: push notifications
+activate RabbitMQ #green
+RabbitMQ --> NotificationAPI
+deactivate NotificationAPI
+RabbitMQ -> Worker:gen and send messages
+activate Worker #red
+Worker -> NotificationAPI: return replies
+deactivate Worker
+activate NotificationAPI #grey
+NotificationAPI -> RabbitMQ: repeat notifications
+NotificationAPI -> MongoDB: update notifications
+activate MongoDB #yellow
+MongoDB --> NotificationAPI
+deactivate Postgres
+deactivate NotificationAPI
+@enduml

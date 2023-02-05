@@ -1,0 +1,105 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+    class User_Group_Link #yellow {
+    UUID id
+    UUID user_id
+    UUID group_id
+    }
+
+    class User #yellow {
+    UUID id
+    string name
+    string mail
+    bool is_subscribed
+    }
+
+    class Group #yellow {
+    UUID id
+    string name
+    }
+
+    class Filmwork #yellow {
+    UUID id
+    string name
+    }
+
+    User::id "1" *-- "*" User_Group_Link::user_id
+    Group::id "1" *-- "*" User_Group_Link::group_id
+
+
+    enum PriorityType {
+    HIGH
+    NORMAL
+    LOW
+    }
+
+    enum MailingType {
+    URGENT
+    EVERYDAY
+    EVERYMONTH
+    }
+
+    class Notification {
+    UUID id
+    datetime last_dt
+    User[] users
+    MailingType notif_type
+    PriorityType priority
+    UUID template_id
+    UUID content_id
+    datetime send_until
+    }
+
+    class Template {
+    UUID id
+    string text
+    }
+
+
+    class Message {
+    UUID id
+    UUID notif_id
+    string[] recipients
+    string theme
+    string text
+    }
+
+    Notification::priority o-- PriorityType
+    Notification::notif_type o-- MailingType
+    Notification::template_id o-- Template
+    Message::notif_id o-- Notification
+
+
+    class Content {
+    UUID id
+    KeyValue[] data
+    }
+
+    class Review {
+    UUID id
+    Score[] scores
+    }
+
+    class Movie {
+    UUID id
+    Score[] scores
+    }
+
+    class Score {
+    UUID user_id
+    int score
+    }
+
+    Movie::user_id o-- Score
+    Review::user_id o-- Score
+    Content::data o-- Movie
+    Content::data o-- Review
+    Content::data o-- Filmwork
+
+Notification::content_id o-- Content
+Notification::users o-- User
+
+
+@enduml

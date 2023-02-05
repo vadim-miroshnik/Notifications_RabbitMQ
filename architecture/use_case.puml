@@ -1,0 +1,29 @@
+@startuml
+skinparam componentStyle uml2
+actor Admin
+actor User
+component AdminWebApp #lightgreen
+component NotifictionAPI #lightgreen
+component Scheduler #green
+component Worker #red
+database Postgres #yellow
+database MongoDB #yellow
+database Queue #orange
+
+Admin -> AdminWebApp: (1) create groups, movies
+Admin -> NotifictionAPI: (8) send notifications
+User -down-> NotifictionAPI: (4) enable/disable notifications
+NotifictionAPI -> Postgres: (5) user data
+NotifictionAPI -> MongoDB: create notifications
+NotifictionAPI -down-> Queue: (9) admin notifications
+NotifictionAPI -down-> Queue: (10) batch notifications
+AdminWebApp -down-> Postgres: (2) groups data
+AdminWebApp -down-> Postgres: (3) new movies
+Postgres -down-> Scheduler: (6) get new movies
+Scheduler -down-> NotifictionAPI: (7) send batch notifications
+Queue -down-> Worker: (11) gen and send messages
+Worker -> NotifictionAPI: (12) replies
+NotifictionAPI -> MongoDB: (13) update notification
+
+
+@enduml
