@@ -8,8 +8,6 @@ run_postgres:
 run_mongodb:
 	docker-compose -f docker-compose_mongodb.yml up -d
 
-run_environment: run_postgres run_mongodb
-
 drop_db:
 	docker stop postgres_container && docker rm --force postgres_container
 	docker volume rm admin_panel_postgres
@@ -34,3 +32,5 @@ initialize_mongo:
 
 run_rabbit:
 	docker compose up -d rabbitmq
+
+run_environment: run_postgres run_mongodb run_rabbit
