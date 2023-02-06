@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import ORJSONResponse
-
+from api.v1 import notifications
 from core.config import settings
 from db import mongodb
 
@@ -47,6 +47,9 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     await mongodb.mongodb.close()
+
+
+app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
 
 
 if __name__ == "__main__":
