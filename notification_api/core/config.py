@@ -20,9 +20,18 @@ class Mongo(BaseModel):
     port: int = Field(27017)
 
 
+class Postgres(BaseSettings):
+    host: str = Field("127.0.0.1")
+    port: int = Field(5432)
+    db: str = Field("movies_database")
+    user: str = Field("app")
+    pwd: str = Field("123qwe")
+
+
 class Settings(BaseSettings):
     notify_app: NotifyApp = Field(NotifyApp())
     mongo: Mongo = Field(Mongo())
+    postgres: Postgres = Field(Postgres())
     project_name: str = Field("notification")
     debug: bool = Field(False)
 
