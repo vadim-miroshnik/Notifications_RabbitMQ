@@ -9,9 +9,10 @@ from db.mongodb import get_mongodb_notifications
 from services.notifications import NotificationsService
 from db.queue import get_queue_service
 from storage.queue import QueueService
-from sqlalchemy.orm import sessionmaker
-from db.postgres import get_db
-from .schemas import NotifResponse
+# from sqlalchemy.orm import sessionmaker
+# from db.postgres import get_db
+from .schemas import NotifResponse, NotifRequest
+from models.notification import Notification
 
 router = APIRouter()
 
@@ -27,17 +28,27 @@ router = APIRouter()
     summary="Создать персонализированную рассылку",
     description="Создать персонализированную рассылку",
     tags=["notifications"],
-    dependencies=[Depends(auth)],
+    # dependencies=[Depends(auth)],
 )
 async def add_person_notification(
     request: Request,
+    data: NotifRequest = Body(default=None),
     # movie_id: UUID = Query(default=uuid.uuid4()),
-    db: sessionmaker = Depends(get_db),
+    # db: sessionmaker = Depends(get_db),
     queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
-    user = request.state.user_id
-    # await service.add(user, str(movie_id))
+    user = "3fa85f64-5717-4562-b3fc-2c963f66afa6"  # request.state.user_id
+    await service.add(
+        Notification(
+            template=data.template,
+            data=data.content_data,
+            recipients=data.recepients,
+            type=data.notif_type.value,
+            subject=data.subject,
+            priority=data.priority,
+        )
+    )
     return NotifResponse(
         user_id=user,
     )
@@ -92,5 +103,3 @@ async def reply_from_user(
     return NotifResponse(
         user_id=user,
     )
-
-

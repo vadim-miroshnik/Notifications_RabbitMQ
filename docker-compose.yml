@@ -25,6 +25,8 @@ services:
     image: notification
     networks:
       - movies
+    depends_on:
+      - rabbitmq
     environment:
       APP__JWT_SECRET_KEY: $APP__JWT_SECRET_KEY
       APP__ALGORITHM: HS256
@@ -60,7 +62,7 @@ services:
 
 networks:
   movies:
-    driver: bridge
+    name: movies
 
 volumes:
     postgres:
