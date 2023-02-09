@@ -155,4 +155,4 @@ services:
 
 networks:
     movies:
-      name: movies
+      external: true

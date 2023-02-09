@@ -62,7 +62,7 @@ services:
 
 networks:
   movies:
-    name: movies
+    driver: bridge
 
 volumes:
     postgres:
