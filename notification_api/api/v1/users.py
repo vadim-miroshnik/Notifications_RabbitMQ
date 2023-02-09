@@ -3,6 +3,7 @@ from http import HTTPStatus
 from uuid import UUID
 
 from auth.auth_bearer import auth
+from auth.auth_handler import encode_jwt
 from bson import json_util
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, Query, Request
 from db.mongodb import get_mongodb_notifications
@@ -37,4 +38,18 @@ async def enable_notifications(
     return NotifResponse(
         user_id=user,
     )
+
+
+@router.get(
+    "/login",
+    response_model=None,
+    summary="",
+    description="",
+    response_description="",
+)
+async def get_access_token(user_id: str | None = None) -> str:
+    if not user_id:
+        user_id = str(uuid.uuid4())
+    token: str = encode_jwt(user_id)
+    return token
 
