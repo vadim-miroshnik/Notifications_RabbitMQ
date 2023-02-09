@@ -49,3 +49,12 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         ],
     )
     type = models.CharField(verbose_name=_("types"), max_length=7, choices=TypeChoice.choices, default=TypeChoice.movie)
+
+
+class User(UUIDMixin):
+    login = models.CharField(verbose_name=_("login"), max_length=63)
+    password = models.TextField(verbose_name=_("password"), blank=True, null=True)
+    fullname = models.CharField(verbose_name=_("fullname"), max_length=127, null=True)
+    email = models.CharField(verbose_name=_("email"), max_length=63, null=True)
+    phone = models.CharField(verbose_name=_("phone"), max_length=31, null=True)
+    subscribed = models.BooleanField(verbose_name=_("subscribed"), default=False)
