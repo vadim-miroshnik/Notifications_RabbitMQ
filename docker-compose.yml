@@ -59,11 +59,6 @@ services:
     networks:
       - movies
 
-
-networks:
-  movies:
-    driver: bridge
-
 volumes:
     postgres:
       name: admin_panel_postgres
