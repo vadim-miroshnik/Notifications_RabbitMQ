@@ -4,10 +4,18 @@ prepare_environment:
 	pip install -r notification_api/requirements.txt
 
 run_postgres:
-	docker compose up -d postgres pgadmin
+	docker compose \
+		-f docker-compose_network.yml \
+		-f docker-compose.yml \
+		-f docker-compose.override.yml \
+		up -d postgres pgadmin
 
 run_mongodb:
-	docker-compose -f docker-compose_mongodb.yml up -d
+	docker compose \
+		-f docker-compose_network.yml \
+		-f docker-compose_mongodb.yml \
+		-f docker-compose_mongodb.override.yml \
+		up -d
 
 drop_db:
 	docker stop postgres_container && docker rm --force postgres_container
@@ -18,7 +26,11 @@ run_project:
 	python3 admin_panel/manage.py runserver
 
 run_notification_container:
-	docker-compose up --build notification
+	docker compose \
+		-f docker-compose_network.yml \
+ 		-f docker-compose.yml \
+		-f docker-compose.override.yml \
+ 		up --build notification
 
 create_django_superuser:
 	python3 admin_panel/manage.py createsuperuser
@@ -35,6 +47,25 @@ initialize_mongo:
 	docker exec -it mongos1 bash -c 'echo "sh.enableSharding(\"movies\")" | mongosh'
 
 run_rabbit:
-	docker compose up -d rabbitmq
+	docker compose \
+		-f docker-compose_network.yml \
+		-f docker-compose.yml \
+		 up -d rabbitmq
 
 run_environment: run_postgres run_mongodb run_rabbit
+
+down:
+	docker compose \
+		-f docker-compose_network.yml \
+		-f docker-compose.yml \
+		-f docker-compose.override.yml \
+		-f docker-compose_mongodb.yml \
+		-f docker-compose_mongodb.override.yml \
+		down --remove-orphans
+
+run_prod:
+	docker compose \
+		-f docker-compose_network.yml \
+		-f docker-compose.yml \
+		-f docker-compose_mongodb.yml \
+		up -d
