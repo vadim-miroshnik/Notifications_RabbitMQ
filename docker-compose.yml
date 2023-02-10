@@ -32,6 +32,13 @@ services:
       APP__ALGORITHM: HS256
       MONGO__HOST: mongos1
       MONGO__PORT: 27017
+      RABBIT__HOST: rabbitmq
+      RABBIT__PORT: 5672
+      POSTGRES__USER: ${POSTGRES__USER}
+      POSTGRES__PASSWORD: ${POSTGRES__PASSWORD}
+      POSTGRES__DB: ${POSTGRES__DB}
+      POSTGRES__HOST: "postgres_container"
+
     env_file:
       - .env
 

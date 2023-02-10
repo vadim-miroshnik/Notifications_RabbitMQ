@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from core.config import settings
 from fastapi_utils.guid_type import setup_guids_postgresql
 
-POSTGRES_URL = f"postgresql://{settings.postgres.user}:{settings.postgres.pwd}@{settings.postgres.host}:{settings.postgres.port}/{settings.postgres.db}"
+POSTGRES_URL = f"postgresql://{settings.postgres.user}:{settings.postgres.password}@{settings.postgres.host}:{settings.postgres.port}/{settings.postgres.db}"
 
 engine = create_engine(POSTGRES_URL, echo=True)
 

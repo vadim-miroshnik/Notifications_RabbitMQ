@@ -47,7 +47,9 @@ app.openapi = custom_openapi
 async def startup_event():
     # todo use env variables
     credentials = pika.PlainCredentials("guest", "guest")
-    rabbitmq = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", credentials=credentials))
+    rabbitmq = pika.BlockingConnection(
+        pika.ConnectionParameters(host=settings.rabbit.host, port=settings.rabbit.port, credentials=credentials)
+    )
 
 
 @app.on_event("shutdown")
