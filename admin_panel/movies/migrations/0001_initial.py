@@ -27,6 +27,8 @@ class Migration(migrations.Migration):
                 ('type', models.CharField(choices=[('movie', 'movie'), ('tv_show', 'tv_show')], default='movie', max_length=7, verbose_name='types')),
             ],
             options={
+                'verbose_name': 'film',
+                'verbose_name_plural': 'films',
                 'db_table': 'content"."filmwork',
             },
         ),
@@ -37,6 +39,8 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255, verbose_name='notification_group_name')),
             ],
             options={
+                'verbose_name': 'notification_group',
+                'verbose_name_plural': 'notification_group_plural',
                 'db_table': 'content"."notificationgroup',
             },
         ),
@@ -46,10 +50,12 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('name', models.CharField(max_length=255, verbose_name='template_name')),
                 ('template', models.TextField(blank=True, null=True, verbose_name='template')),
-                ('type', models.CharField(choices=[('email', 'email'), ('push', 'push'), ('sms', 'sms')], default='email', max_length=5)),
-                ('priority', models.CharField(choices=[('low', 'low'), ('medium', 'medium'), ('high', 'high')], default='medium', max_length=6)),
+                ('type', models.CharField(choices=[('email', 'email'), ('push', 'push'), ('sms', 'sms')], default='email', max_length=5, verbose_name='type')),
+                ('priority', models.CharField(choices=[('low', 'low'), ('medium', 'medium'), ('high', 'high')], default='medium', max_length=6, verbose_name='priority')),
             ],
             options={
+                'verbose_name': 'template',
+                'verbose_name_plural': 'template_plural',
                 'db_table': 'content"."template',
             },
         ),
@@ -68,6 +74,8 @@ class Migration(migrations.Migration):
                 ('confirmed_email', models.BooleanField(default=False, verbose_name='confirmed_email')),
             ],
             options={
+                'verbose_name': 'user',
+                'verbose_name_plural': 'user_plural',
                 'db_table': 'content"."user',
             },
         ),
@@ -80,6 +88,8 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.user', verbose_name='user')),
             ],
             options={
+                'verbose_name': 'user_notification_group',
+                'verbose_name_plural': 'user_notification_group_plural',
                 'db_table': 'content"."UserNotificationUserGroup',
             },
         ),
