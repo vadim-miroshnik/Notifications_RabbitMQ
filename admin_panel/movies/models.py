@@ -52,7 +52,8 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
 
     class Meta:
         db_table = 'content"."filmwork'
-
+        verbose_name = _("film")
+        verbose_name_plural = _("films")
 
 class NotificationGroup(UUIDMixin):
     name = models.CharField(verbose_name=_("notification_group_name"), max_length=255)
@@ -62,6 +63,8 @@ class NotificationGroup(UUIDMixin):
 
     class Meta:
         db_table = 'content"."notificationgroup'
+        verbose_name = _("notification_group")
+        verbose_name_plural = _("notification_group_plural")
 
 
 class User(UUIDMixin, TimeStampedMixin):
@@ -81,6 +84,8 @@ class User(UUIDMixin, TimeStampedMixin):
 
     class Meta:
         db_table = 'content"."user'
+        verbose_name = _("user")
+        verbose_name_plural = _("user_plural")
 
 
 class UserNotificationGroup(UUIDMixin, TimeStampedCreateMixin):
@@ -96,6 +101,8 @@ class UserNotificationGroup(UUIDMixin, TimeStampedCreateMixin):
                 fields=["user", "notification_user_group"], name="user_notification_user_group_idx"
             ),
         ]
+        verbose_name = _("user_notification_group")
+        verbose_name_plural = _("user_notification_group_plural")
 
 
 class Template(UUIDMixin):
@@ -111,8 +118,10 @@ class Template(UUIDMixin):
 
     name = models.CharField(verbose_name=_("template_name"), max_length=255)
     template = models.TextField(verbose_name=_("template"), blank=True, null=True)
-    type = models.CharField(max_length=5, choices=TemplateType.choices, default=TemplateType.EMAIL)
-    priority = models.CharField(max_length=6, choices=TemplatePriority.choices, default=TemplatePriority.MEDIUM)
+    type = models.CharField(verbose_name=_("type"), max_length=5, choices=TemplateType.choices, default=TemplateType.EMAIL)
+    priority = models.CharField(verbose_name=_("priority"), max_length=6, choices=TemplatePriority.choices, default=TemplatePriority.MEDIUM)
 
     class Meta:
         db_table = 'content"."template'
+        verbose_name = _("template")
+        verbose_name_plural = _("template_plural")
