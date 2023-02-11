@@ -49,10 +49,9 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         ],
     )
     type = models.CharField(verbose_name=_("types"), max_length=7, choices=TypeChoice.choices, default=TypeChoice.movie)
+
     class Meta:
         db_table = 'content"."filmwork'
-
-
 
 
 class NotificationGroup(UUIDMixin):
@@ -66,18 +65,22 @@ class NotificationGroup(UUIDMixin):
 
 
 class User(UUIDMixin, TimeStampedMixin):
-    fio = models.CharField(verbose_name=_("fio"), max_length=255)
+    fullname = models.CharField(verbose_name=_("fullname"), max_length=255, null=True)
+    login = models.CharField(verbose_name=_("login"), max_length=63)
+    password = models.TextField(verbose_name=_("password"), blank=True, null=True)
     email = models.CharField(verbose_name=_("user_email"), max_length=255, blank=True, null=True)
-    phone = models.CharField(verbose_name=_("user_phone"), max_length=10, blank=True, null=True)
+    phone = models.CharField(verbose_name=_("user_phone"), max_length=12, blank=True, null=True)
     allow_send_email = models.BooleanField(verbose_name=_("allow_send_email"), default=False)
-    notification_group = models.ManyToManyField(to=NotificationGroup, verbose_name=_("notification_group_name"), through="UserNotificationGroup")
+    confirmed_email = models.BooleanField(verbose_name=_("confirmed_email"), default=False)
+    notification_group = models.ManyToManyField(
+        to=NotificationGroup, verbose_name=_("notification_group_name"), through="UserNotificationGroup"
+    )
 
     def __str__(self):
-        return self.fio
+        return self.fullname
 
     class Meta:
         db_table = 'content"."user'
-
 
 
 class UserNotificationGroup(UUIDMixin, TimeStampedCreateMixin):
@@ -95,8 +98,21 @@ class UserNotificationGroup(UUIDMixin, TimeStampedCreateMixin):
         ]
 
 
-class EmailTemplate(UUIDMixin):
-    name = models.CharField(verbose_name=_("email_template_name"), max_length=255)
-    template = models.TextField(verbose_name=_("email_template"), blank=True, null=True)
+class Template(UUIDMixin):
+    class TemplateType(models.TextChoices):
+        EMAIL = "email", _("email")
+        PUSH = "push", _("push")
+        SMS = "sms", _("sms")
+
+    class TemplatePriority(models.TextChoices):
+        LOW = "low", _("low")
+        MEDIUM = "medium", _("medium")
+        HIGH = "high", _("high")
+
+    name = models.CharField(verbose_name=_("template_name"), max_length=255)
+    template = models.TextField(verbose_name=_("template"), blank=True, null=True)
+    type = models.CharField(max_length=5, choices=TemplateType.choices, default=TemplateType.EMAIL)
+    priority = models.CharField(max_length=6, choices=TemplatePriority.choices, default=TemplatePriority.MEDIUM)
+
     class Meta:
-        db_table = 'content"."emailtemplate'
+        db_table = 'content"."template'

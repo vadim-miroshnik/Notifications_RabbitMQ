@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from movies.models import Filmwork, UserNotificationGroup, NotificationGroup, EmailTemplate
+from movies.models import Filmwork, UserNotificationGroup, NotificationGroup, Template
 from movies.models import User
 
 
@@ -35,16 +35,19 @@ class NotificationUserGroupAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     inlines = (UserNotificationGroupInline,)
     list_display = (
-        "fio",
+        "fullname",
+        "login",
         "email",
         "phone",
         "allow_send_email",
+        "confirmed_email",
         "get_notification_group",
     )
 
     def get_notification_group(self, obj):
         return "\n".join([n.name for n in obj.notification_group.all()])
 
-@admin.register(EmailTemplate)
+
+@admin.register(Template)
 class NotificationUserGroupAdmin(admin.ModelAdmin):
-    list_display = ("name",)
+    list_display = ("name", "type", "priority")
