@@ -2,6 +2,8 @@ prepare_environment:
 	cp -r env.example .env
 	pip install -r admin_panel/requirements.txt
 	pip install -r notification_api/requirements.txt
+	python admin_panel/manage.py collectstatic
+
 
 run_postgres:
 	docker compose \
@@ -23,7 +25,16 @@ drop_db:
 
 run_project:
 	python3 admin_panel/manage.py migrate
+	python3 admin_panel/manage.py makemessages -l en -l ru
+	python3 admin_panel/manage.py compilemessages -l en -l ru
 	python3 admin_panel/manage.py runserver
+
+run_admin_panel:
+	docker compose \
+		-f docker-compose_network.yml \
+ 		-f docker-compose.yml \
+		-f docker-compose.override.yml \
+ 		up --build admin
 
 run_notification_container:
 	docker compose \

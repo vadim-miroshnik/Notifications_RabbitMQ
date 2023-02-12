@@ -21,7 +21,6 @@ from pydantic import BaseSettings, BaseModel, Field
 ADMIN_PATH = Path(__file__).resolve().parent.parent
 BASE_DIR = ADMIN_PATH.parent
 
-
 class Postgres(BaseModel):
     user: str
     password: str
@@ -31,7 +30,7 @@ class Postgres(BaseModel):
 
 
 class Settings(BaseSettings):
-    postgres: Postgres
+    postgres: Postgres = Field(Postgres)
     project_name: str = Field("admin_panel")
     debug: bool = Field(False)
     secret_key: str = "django-insecure-0%hoizw!72v&21^0#=rwrdv!#4jb!*dsh6m=p+evrr^j-anh6$"
@@ -45,8 +44,7 @@ settings = Settings()
 
 logging.debug("%s", settings.dict())
 
-
-STATIC_ROOT = ADMIN_PATH.joinpath("data").joinpath("static")
+STATIC_ROOT = ADMIN_PATH.joinpath("static")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -134,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = "UTC"
 
@@ -152,3 +150,5 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOCALE_PATHS = [ADMIN_PATH.joinpath('movies/locale')]

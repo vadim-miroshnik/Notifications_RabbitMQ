@@ -1,5 +1,8 @@
 version: '3'
 services:
+  admin:
+    ports:
+      - 8001:8000
 
   postgres:
     ports:

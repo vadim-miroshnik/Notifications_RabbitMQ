@@ -17,6 +17,8 @@ services:
       - movies
     depends_on:
       - postgres
+    volumes:
+      - ./admin_panel/static/:/var/www/static:ro
     build: ./admin_panel/
 
 

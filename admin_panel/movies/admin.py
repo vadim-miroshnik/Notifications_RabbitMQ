@@ -22,8 +22,6 @@ class FilmworkAdmin(admin.ModelAdmin):
 class UserNotificationGroupInline(admin.TabularInline):
     model = UserNotificationGroup
     extra = 3
-    verbose_name = _("user_notification_group_inline")
-    verbose_name_plural = _("user_notification_group_inline")
 
 
 @admin.register(NotificationGroup)
@@ -43,6 +41,8 @@ class UserAdmin(admin.ModelAdmin):
         "confirmed_email",
         "get_notification_group",
     )
+
+    readonly_fields = ["confirmed_email"]
 
     def get_notification_group(self, obj):
         return "\n".join([n.name for n in obj.notification_group.all()])
