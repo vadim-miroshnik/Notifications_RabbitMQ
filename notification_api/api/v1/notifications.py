@@ -103,3 +103,46 @@ async def reply_from_user(
     return NotifResponse(
         user_id=user,
     )
+
+@router.get(
+    "/test",
+    responses={
+        int(HTTPStatus.CREATED): {
+            "model": NotifResponse,
+            "description": "Successful Response",
+        },
+    },
+    summary="Получить ответ от пользователя",
+    description="Получить ответ от пользователя",
+    tags=["notifications"],
+)
+async def test(
+    request: Request,
+    queue: QueueService = Depends(get_queue_service),
+) -> NotifResponse:
+    await queue.send("notif-low", "test-test", "test-test")
+    return NotifResponse(
+        user_id=uuid.uuid4(),
+    )
+
+
+@router.get(
+    "/test2",
+    responses={
+        int(HTTPStatus.CREATED): {
+            "model": NotifResponse,
+            "description": "Successful Response",
+        },
+    },
+    summary="Получить ответ от пользователя",
+    description="Получить ответ от пользователя",
+    tags=["notifications"],
+)
+async def test2(
+    request: Request,
+    queue: QueueService = Depends(get_queue_service),
+) -> NotifResponse:
+    await queue.read("notif-low")
+    return NotifResponse(
+        user_id=uuid.uuid4(),
+    )

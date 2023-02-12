@@ -19,7 +19,26 @@ class NotifResponse(UUIDMixin, BaseModel):
 class NotifRequest(UUIDMixin, BaseModel):
     notif_type: NotifTypeEnum = NotifTypeEnum.EMAIL
     subject: str | None = None
-    template: str | None = None
-    content_data: list[str] = []
-    recepients: list[str] = []
+    template_id: str | None = None
+    group_id: str | None = None
     priority: PriorityEnum = PriorityEnum.LOW
+
+
+class UserRequest(BaseModel):
+    login: str
+    fullname: str | None = None
+    password: str | None = None
+    email: str
+    phone: str | None = None
+
+
+class UserResponse(BaseModel):
+    id: str
+    login: str
+    fullname: str | None = None
+    email: str
+    phone: str | None = None
+    allow_send_email: bool
+    confirmed_email: bool
+    created_at: datetime
+    updated_at:datetime

@@ -10,7 +10,7 @@ from db.mongodb import get_mongodb_notifications
 from sqlalchemy.orm import Session
 from db.postgres import get_db
 from services.notifications import NotificationsService
-from .schemas import NotifResponse
+from .schemas import UserResponse, UserRequest
 from models.user import User
 
 router = APIRouter()
@@ -20,28 +20,26 @@ router = APIRouter()
     "/enable-notifications",
     responses={
         int(HTTPStatus.CREATED): {
-            "model": NotifResponse,
+            "model": UserResponse,
             "description": "Successful Response",
         },
     },
     summary="Разрешить/запретить рассылку",
     description="Разрешить/запретить рассылку",
     tags=["users"],
-    dependencies=[Depends(auth)],
+    # dependencies=[Depends(auth)],
 )
 async def enable_notifications(
     request: Request,
     db: Session = Depends(get_db),
-    # movie_id: UUID = Query(default=uuid.uuid4()),
-    # kafka: KafkaService = Depends(get_kafka_service),
-    service: NotificationsService = Depends(get_mongodb_notifications),
-) -> NotifResponse:
-    test = next(db).query(User).all()
-    user = request.state.user_id
-    # await service.add(user, str(movie_id))
-    return NotifResponse(
-        user_id=user,
-    )
+) -> UserResponse:
+    user_id = "d436ed9e-cfdb-4b44-9c15-cc941dd5459e"
+    # user_id = request.state.user_id
+    session = list(db)[0]
+    user = session.query(User).filter_by(id=user_id).all()[0]
+    setattr(user, "allow_send_email", True)
+    session.commit()
+    return user.__dict__
 
 
 @router.get(
@@ -61,23 +59,31 @@ async def get_access_token(user_id: str | None = None) -> str:
     "/register",
     responses={
         int(HTTPStatus.CREATED): {
-            "model": NotifResponse,
+            "model": UserResponse,
             "description": "Successful Response",
         },
     },
     summary="Регистрация пользователя",
     description="Регистрация пользователя",
     tags=["users"],
-    dependencies=[Depends(auth)],
 )
 async def register(
-    request: Request,
+    data: UserRequest = Body(default=None),
     db: Session = Depends(get_db),
     service: NotificationsService = Depends(get_mongodb_notifications),
-) -> NotifResponse:
+) -> UserResponse:
     session = next(db)
-    test = session.add(User(login="test", password="test", email="test@test.ru", fullname="test", phone="1234567890", subscribed=False))
+    session.add(User(login=data.login, password=data.password, email=data.email, fullname=data.fullname, phone=data.phone, subscribed=False))
     session.commit()
-    return NotifResponse(
-        user_id=user,
+    user = session.query(User).filter_by(login=data.login).all()[0]
+    return UserResponse(
+        id=str(user.id),
+        login=user.login,
+        fullname=user.fullname,
+        email=user.email,
+        phone=user.phone,
+        allow_send_email=user.allow_send_email,
+        confirmed_email=user.confirmed_email,
+        created_at=user.created_at,
+        updated_at=user.updated_at
     )

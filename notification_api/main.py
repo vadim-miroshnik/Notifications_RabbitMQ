@@ -3,12 +3,13 @@ from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import ORJSONResponse
 
-from pika import BlockingConnection
+# from pika import BlockingConnection
 
 from api.v1 import notifications, users
 from core.config import settings
 from db import mongodb
-import pika
+# import pika
+import aio_pika
 from db.queue import rabbitmq
 
 
@@ -48,10 +49,11 @@ app.openapi = custom_openapi
 @app.on_event("startup")
 async def startup_event():
     # todo use env variables
-    credentials = pika.PlainCredentials("guest", "guest")
-    rabbitmq = pika.BlockingConnection(
-        pika.ConnectionParameters(host=settings.rabbit.host, port=settings.rabbit.port, credentials=credentials)
-    )
+    # credentials = pika.PlainCredentials("guest", "guest")
+    # rabbitmq = pika.BlockingConnection(
+    #    pika.ConnectionParameters(host=settings.rabbit.host, port=settings.rabbit.port, credentials=credentials)
+    # )
+    pass
 
 
 @app.on_event("shutdown")
