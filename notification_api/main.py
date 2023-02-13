@@ -11,6 +11,7 @@ from db import mongodb
 # import pika
 import aio_pika
 from db.queue import rabbitmq
+from db.postgres import db
 
 
 app = FastAPI(
@@ -59,6 +60,7 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     rabbitmq.close()
+    db.close()
     await mongodb.mongodb.close()
 
 

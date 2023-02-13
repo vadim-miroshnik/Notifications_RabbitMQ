@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from http import HTTPStatus
 from uuid import UUID
@@ -12,11 +13,16 @@ from db.postgres import get_db
 from services.notifications import NotificationsService
 from .schemas import UserResponse, UserRequest
 from models.user import User
+from models.template import Template
+from models.notification import Notification, NotifTypeEnum, PriorityEnum, Recipient
+from db.queue import get_queue_service
+from storage.queue import QueueService
+
 
 router = APIRouter()
 
 
-@router.patch(
+@router.get(
     "/enable-notifications",
     responses={
         int(HTTPStatus.CREATED): {
@@ -35,10 +41,9 @@ async def enable_notifications(
 ) -> UserResponse:
     user_id = "d436ed9e-cfdb-4b44-9c15-cc941dd5459e"
     # user_id = request.state.user_id
-    session = list(db)[0]
-    user = session.query(User).filter_by(id=user_id).all()[0]
+    user = db.query(User).filter_by(id=user_id).all()[0]
     setattr(user, "allow_send_email", True)
-    session.commit()
+    db.commit()
     return user.__dict__
 
 
@@ -55,6 +60,7 @@ async def get_access_token(user_id: str | None = None) -> str:
     token: str = encode_jwt(user_id)
     return token
 
+
 @router.post(
     "/register",
     responses={
@@ -70,13 +76,34 @@ async def get_access_token(user_id: str | None = None) -> str:
 async def register(
     data: UserRequest = Body(default=None),
     db: Session = Depends(get_db),
+    queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> UserResponse:
-    session = next(db)
-    session.add(User(login=data.login, password=data.password, email=data.email, fullname=data.fullname, phone=data.phone, subscribed=False))
-    session.commit()
-    user = session.query(User).filter_by(login=data.login).all()[0]
-    return UserResponse(
+    db.add(
+        User(
+            login=data.login,
+            password=data.password,
+            email=data.email,
+            fullname=data.fullname,
+            phone=data.phone,
+            subscribed=False,
+        )
+    )
+    db.commit()
+    user = db.query(User).filter_by(login=data.login).all()[0]
+    template = db.query(Template).filter_by(name="welcome").all()[0]
+    email = getattr(user, "email")
+    notification = Notification(
+        id=str(uuid.uuid4()),
+        template=getattr(template, "template"),
+        recipients=[Recipient(email=getattr(user, "email"), fullname=getattr(user, "fullname"), phone=getattr(user, "phone"))],
+        type=NotifTypeEnum.EMAIL,
+        subject="Welcome",
+        priority=PriorityEnum.HIGH,
+    )
+    await queue.send(PriorityEnum.HIGH, "register", notification)
+    return user.__dict__
+    """return UserResponse(
         id=str(user.id),
         login=user.login,
         fullname=user.fullname,
@@ -86,4 +113,4 @@ async def register(
         confirmed_email=user.confirmed_email,
         created_at=user.created_at,
         updated_at=user.updated_at
-    )
+    )"""

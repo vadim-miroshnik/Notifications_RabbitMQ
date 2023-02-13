@@ -15,11 +15,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+db = SessionLocal()
 
 @lru_cache()
 def get_db():
-    db = SessionLocal()
+    return db
+    '''db = SessionLocal()
     try:
         yield db
     finally:
-        db.close()
+        db.close()'''

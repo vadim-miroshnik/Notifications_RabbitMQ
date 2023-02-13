@@ -4,6 +4,9 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+# from bitly_api import Connection
+# from datetime import datetime, timedelta
+
 
 class NotifTypeEnum(str, Enum):
     EMAIL = "email"
@@ -17,34 +20,61 @@ class PriorityEnum(str, Enum):
     HIGH = "high"
 
 
-class UUIDMixin(BaseModel):
-    user_id: UUID | None = None
-    notif_id: UUID | None = None
+class Recipient(BaseModel):
+    email: str
+    phone: str | None = None
+    fullname: str | None = None
+    data: dict | None = None
+
+    def __init__(
+        self,
+        email: str = None,
+        phone: str = None,
+        fullname: str = None
+    ) -> None:
+        super().__init__(
+            email=email,
+            phone=phone,
+            fullname=fullname
+        )
+        # shortener = Connection(access_token="1ce341a12357a2e9976b6653c84d45ee4cc64cfb")
+        # url = shortener.shorten(f"http://127.0.0.1/api/v1/users/confirmed/{email}/{datetime.now() + timedelta(hours=1)}/http://0.0.0.0")
+        self.data = {"url": "http://0.0.0.0"}
 
 
-class Notification(UUIDMixin, BaseModel):
+class Notification(BaseModel):
+    id: UUID
     notif_type: NotifTypeEnum = NotifTypeEnum.EMAIL
     subject: str | None = None
     template: str | None = None
-    content_data: list[str] = []
-    recepients: list[str] = []
+    recipients: list[Recipient] = []
     priority: PriorityEnum = PriorityEnum.LOW
 
     def __init__(
         self,
-        template: str,
-        data: list[str],
-        recipients: list[str],
+        id: str = None,
+        template: str = "",
+        recipients: list[Recipient] = [],
         type: NotifTypeEnum = NotifTypeEnum.EMAIL,
         subject: str = "Ad message",
         priority: PriorityEnum = PriorityEnum.LOW,
     ) -> None:
         super().__init__(
+            id=id,
             notif_type=type,
             subject=subject,
             template=template,
-            content_data=data,
-            recepients=recipients,
+            recipients=recipients,
             priority=priority
-
         )
+
+    @property
+    def as_dict(self) -> dict:
+        return {
+            id: self.id,
+            'template': self.template,
+            'subject': self.subject,
+            'type': self.notif_type.value,
+            'priority': self.priority.value,
+            'recipients': [{'email': r.email, 'fullname': r.fullname, 'phone': r.phone, 'data': r.data} for r in self.recipients],
+        }

@@ -21,7 +21,6 @@ async def get_rabbitmq():
             rabbitmq = await aio_pika.connect_robust("amqp://guest:guest@rabbitmq:5672", loop=asyncio.get_event_loop())
             break
         except ConnectionError as e:
-            print(e)
             await asyncio.sleep(5)
     return rabbitmq
 

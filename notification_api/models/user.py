@@ -18,7 +18,6 @@ user_notification = Table(
 
 class NotificationGroup(Base):
     __tablename__ = "notificationgroup"
-    # __table_args__ = {"schema": "content"}
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -27,7 +26,7 @@ class NotificationGroup(Base):
         nullable=False,
     )
     name = Column(String, nullable=False)
-    #users = relationship("User", secondary=user_notification, backref='notificationgroups')
+
 
 
 class User(Base):
@@ -67,6 +66,15 @@ class User(Base):
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()
         self.confirmed_email = False
+
+    @property
+    def as_dict(self) -> dict:
+        return {
+            'login': self.login,
+            'fullname': self.fullname,
+            'email': self.email,
+            'phone': self.phone,
+        }
 
 '''
 class UserNotificationUserGroup(Base):
