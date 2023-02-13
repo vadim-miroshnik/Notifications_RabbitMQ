@@ -40,6 +40,7 @@ class UserAdmin(admin.ModelAdmin):
         "allow_send_email",
         "confirmed_email",
         "get_notification_group",
+        "timezone",
     )
 
     readonly_fields = ["confirmed_email"]

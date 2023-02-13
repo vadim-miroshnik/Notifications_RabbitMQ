@@ -2,8 +2,6 @@ prepare_environment:
 	cp -r env.example .env
 	pip install -r admin_panel/requirements.txt
 	pip install -r notification_api/requirements.txt
-	python admin_panel/manage.py collectstatic
-
 
 run_postgres:
 	docker compose \

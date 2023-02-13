@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-11 12:06+0000\n"
+"POT-Creation-Date: 2023-02-13 13:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,7 +60,7 @@ msgstr "Фильмы"
 msgid "notification_group_name"
 msgstr "Имя группы уведомления"
 
-#: movies/models.py:66 movies/models.py:94
+#: movies/models.py:66 movies/models.py:95
 msgid "notification_group"
 msgstr "Группы уведомления"
 
@@ -96,62 +96,66 @@ msgstr "Разрешить отправку почты"
 msgid "confirmed_email"
 msgstr "Подтвержденная почта"
 
-#: movies/models.py:87 movies/models.py:92
+#: movies/models.py:81
+msgid "timezone"
+msgstr "Часовой пояс"
+
+#: movies/models.py:88 movies/models.py:93
 msgid "user"
 msgstr "Пользователь"
 
-#: movies/models.py:88
+#: movies/models.py:89
 msgid "user_plural"
 msgstr "Пользователи"
 
-#: movies/models.py:104
+#: movies/models.py:105
 msgid "user_notification_group"
 msgstr "Группа уведомления"
 
-#: movies/models.py:105
+#: movies/models.py:106
 msgid "user_notification_group_plural"
 msgstr "Группы уведомления"
 
-#: movies/models.py:110
+#: movies/models.py:111
 msgid "email"
 msgstr "Почта"
 
-#: movies/models.py:111
+#: movies/models.py:112
 msgid "push"
 msgstr "Пуш"
 
-#: movies/models.py:112
+#: movies/models.py:113
 msgid "sms"
 msgstr "СМС"
 
-#: movies/models.py:115
+#: movies/models.py:116
 msgid "low"
 msgstr "низкий"
 
-#: movies/models.py:116
+#: movies/models.py:117
 msgid "medium"
 msgstr "обычный"
 
-#: movies/models.py:117
+#: movies/models.py:118
 msgid "high"
 msgstr "высокий"
 
-#: movies/models.py:119
+#: movies/models.py:120
 msgid "template_name"
 msgstr "Имя шаблона"
 
-#: movies/models.py:120 movies/models.py:126
+#: movies/models.py:121 movies/models.py:127
 msgid "template"
 msgstr "Шаблон"
 
-#: movies/models.py:121
+#: movies/models.py:122
 msgid "type"
 msgstr "Типы"
 
-#: movies/models.py:122
+#: movies/models.py:123
 msgid "priority"
 msgstr "Приоритет"
 
-#: movies/models.py:127
+#: movies/models.py:128
 msgid "template_plural"
 msgstr "Шаблоны"
