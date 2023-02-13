@@ -78,6 +78,7 @@ class User(UUIDMixin, TimeStampedMixin):
     notification_group = models.ManyToManyField(
         to=NotificationGroup, verbose_name=_("notification_group_name"), through="UserNotificationGroup"
     )
+    timezone = models.IntegerField(verbose_name=_("timezone"), default=0)
 
     def __str__(self):
         return self.fullname

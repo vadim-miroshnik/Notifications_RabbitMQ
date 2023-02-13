@@ -12,7 +12,7 @@ services:
       POSTGRES__DB: ${POSTGRES__DB}
       POSTGRES__HOST: "postgres_container"
       SECRET_KEY: ${SECRET_KEY}
-      DEBUG: ${DEBUG}
+      DEBUG: False
     networks:
       - movies
     depends_on:
