@@ -12,7 +12,8 @@ from db.postgres import get_db
 from db.queue import get_queue_service
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
-from models.notification import Notification, NotifTypeEnum, PriorityEnum, Recipient
+from models.notification import (Notification, NotifTypeEnum, PriorityEnum,
+                                 Recipient)
 from models.template import Template
 from models.user import User
 from sqlalchemy.orm import Session
@@ -144,6 +145,7 @@ async def register(
     summary="Подтверждение почтового адреса пользователя",
     description="Подтверждение почтового адреса пользователя",
     tags=["users"],
+    dependencies=[Depends(auth)],
 )
 async def confirmed(
     email: str,

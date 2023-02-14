@@ -1,7 +1,7 @@
+import uuid
+
 from db.postgres import Base
 from sqlalchemy import Column, String
-
-import uuid
 from sqlalchemy.dialects.postgresql import UUID
 
 

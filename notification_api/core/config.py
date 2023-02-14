@@ -3,9 +3,8 @@ import logging
 from logging import config as logging_config
 from pathlib import Path
 
-from pydantic import BaseSettings, BaseModel, Field
-
 from core.logger import LOGGING
+from pydantic import BaseModel, BaseSettings, Field
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 

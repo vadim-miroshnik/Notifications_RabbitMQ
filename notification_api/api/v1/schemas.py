@@ -1,10 +1,9 @@
-from enum import Enum
 from datetime import datetime
 from uuid import UUID
 
+from models.notification import NotifTypeEnum, PriorityEnum
 from pydantic import BaseModel
 
-from models.notification import NotifTypeEnum, PriorityEnum
 
 class UUIDMixin(BaseModel):
     user_id: UUID | None = None
@@ -12,7 +11,6 @@ class UUIDMixin(BaseModel):
 
 
 class NotifResponse(UUIDMixin, BaseModel):
-    text: str | None = None
     notif_dt: datetime | None = None
 
 
@@ -20,6 +18,7 @@ class NotifRequest(UUIDMixin, BaseModel):
     notif_type: NotifTypeEnum = NotifTypeEnum.EMAIL
     subject: str | None = None
     template_id: str | None = None
+    data: dict | None = None
     group_id: str | None = None
     priority: PriorityEnum = PriorityEnum.LOW
 
@@ -41,4 +40,4 @@ class UserResponse(BaseModel):
     allow_send_email: bool
     confirmed_email: bool
     created_at: datetime
-    updated_at:datetime
+    updated_at: datetime

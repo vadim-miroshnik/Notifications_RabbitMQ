@@ -1,8 +1,7 @@
-import uuid
-from uuid import UUID
+import datetime
 
-from storage.mongodb import Mongodb
 from models.notification import Notification
+from storage.mongodb import Mongodb
 
 
 class NotificationsService:
@@ -10,22 +9,17 @@ class NotificationsService:
         self.stor = stor
 
     async def add(self, notification: Notification):
-        return await self.stor.insert(
-            {
-                "_id": str(uuid.uuid4()),
-                "subject": notification.subject,
-                "template": notification.template,
-                "content_data": notification.content_data,
-                "recepients": notification.recepients,
-                "notif_type": notification.notif_type,
-                "priority": notification.priority,
-            }
-        )
+        return await self.stor.insert(notification.as_dict)
 
-    async def delete(self, user_id: str, movie_id: str):
-        return await self.stor.update(
-            {"_id": user_id}, {"$pull": {"bookmarks": movie_id}}
-        )
+    async def get(self, id: str):
+        return await self.stor.select({"_id": id})
 
-    async def get(self, user_id: str):
-        return await self.stor.select({"_id": user_id})
+    async def delivered(self, id: str, email: str):
+        notification = await self.stor.select({"id": id})
+        if notification:
+            # recipient = next(r for r in notification["recipients"] if r["email"] == email)
+            return await self.stor.update(
+                {"id": id, "recipients.email": email},
+                {"$set": {"recipients.$.delivered": datetime.datetime.now()}},
+            )
+        return None

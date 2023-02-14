@@ -31,15 +31,17 @@ class Recipient(BaseModel):
         phone: str = None,
         fullname: str = None,
         url: str = None,
+        data: dict = None,
     ) -> None:
         super().__init__(email=email, phone=phone, fullname=fullname)
         # shortener = Connection(access_token="1ce341a12357a2e9976b6653c84d45ee4cc64cfb")
         # url = shortener.shorten(f"http://127.0.0.1/api/v1/users/confirmed/{email}/{datetime.now() + timedelta(hours=1)}/http://0.0.0.0")
-        self.data = {"url": url}
+        data["url"] = url
+        self.data = data
 
 
 class Notification(BaseModel):
-    id: UUID
+    id: str
     notif_type: NotifTypeEnum = NotifTypeEnum.EMAIL
     subject: str | None = None
     template: str | None = None
@@ -48,7 +50,7 @@ class Notification(BaseModel):
 
     def __init__(
         self,
-        id: str = None,
+        id: UUID = None,
         template: str = "",
         recipients: list[Recipient] = [],
         type: NotifTypeEnum = NotifTypeEnum.EMAIL,
@@ -67,7 +69,7 @@ class Notification(BaseModel):
     @property
     def as_dict(self) -> dict:
         return {
-            id: self.id,
+            "id": str(self.id),
             "template": self.template,
             "subject": self.subject,
             "type": self.notif_type.value,

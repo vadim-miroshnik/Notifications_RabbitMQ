@@ -1,9 +1,9 @@
 from http import HTTPStatus
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
-from fastapi import Request, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import HTTPException, Request
 from fastapi.responses import ORJSONResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from .auth_handler import decode_jwt
 
@@ -16,13 +16,21 @@ class JWTBearer(HTTPBearer):
         credentials: HTTPAuthorizationCredentials = await super().__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
-                raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Invalid authentication scheme.")
+                raise HTTPException(
+                    status_code=HTTPStatus.FORBIDDEN,
+                    detail="Invalid authentication scheme.",
+                )
             if not (payload := self.verify_jwt(credentials.credentials)):
-                raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Invalid token or expired token.")
+                raise HTTPException(
+                    status_code=HTTPStatus.FORBIDDEN,
+                    detail="Invalid token or expired token.",
+                )
             request.state.user_id = payload["user_id"]
             return ORJSONResponse(credentials.credentials)
         else:
-            raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Invalid authorization code.")
+            raise HTTPException(
+                status_code=HTTPStatus.FORBIDDEN, detail="Invalid authorization code."
+            )
 
     def verify_jwt(self, token: str) -> Optional[Dict[Any, Any]]:
         try:
