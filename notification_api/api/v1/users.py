@@ -1,23 +1,24 @@
+import contextlib
 import datetime
 import uuid
+from datetime import datetime, timedelta
 from http import HTTPStatus
-from uuid import UUID
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 from auth.auth_bearer import auth
 from auth.auth_handler import encode_jwt
-from bson import json_util
-from fastapi import APIRouter, Body, Depends, Header, HTTPException, Query, Request
-from db.mongodb import get_mongodb_notifications
-from sqlalchemy.orm import Session
 from db.postgres import get_db
-from services.notifications import NotificationsService
-from .schemas import UserResponse, UserRequest
-from models.user import User
-from models.template import Template
-from models.notification import Notification, NotifTypeEnum, PriorityEnum, Recipient
 from db.queue import get_queue_service
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse
+from models.notification import Notification, NotifTypeEnum, PriorityEnum, Recipient
+from models.template import Template
+from models.user import User
+from sqlalchemy.orm import Session
 from storage.queue import QueueService
 
+from .schemas import UserRequest, UserResponse
 
 router = APIRouter()
 
@@ -33,18 +34,27 @@ router = APIRouter()
     summary="Разрешить/запретить рассылку",
     description="Разрешить/запретить рассылку",
     tags=["users"],
-    # dependencies=[Depends(auth)],
+    dependencies=[Depends(auth)],
 )
 async def enable_notifications(
     request: Request,
     db: Session = Depends(get_db),
 ) -> UserResponse:
-    user_id = "d436ed9e-cfdb-4b44-9c15-cc941dd5459e"
-    # user_id = request.state.user_id
+    user_id = request.state.user_id
     user = db.query(User).filter_by(id=user_id).all()[0]
     setattr(user, "allow_send_email", True)
     db.commit()
-    return user.__dict__
+    return UserResponse(
+        id=str(user.id),
+        login=user.login,
+        fullname=user.fullname,
+        email=user.email,
+        phone=user.phone,
+        allow_send_email=user.allow_send_email,
+        confirmed_email=user.confirmed_email,
+        created_at=user.created_at,
+        updated_at=user.updated_at,
+    )
 
 
 @router.get(
@@ -77,7 +87,6 @@ async def register(
     data: UserRequest = Body(default=None),
     db: Session = Depends(get_db),
     queue: QueueService = Depends(get_queue_service),
-    service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> UserResponse:
     db.add(
         User(
@@ -93,17 +102,25 @@ async def register(
     user = db.query(User).filter_by(login=data.login).all()[0]
     template = db.query(Template).filter_by(name="welcome").all()[0]
     email = getattr(user, "email")
+    url = f"http://0.0.0.0:8000/api/v1/users/confirmed/{email}/{datetime.now() + timedelta(hours=1)}/google.com"
+    short_url = make_tiny(url)
     notification = Notification(
         id=str(uuid.uuid4()),
         template=getattr(template, "template"),
-        recipients=[Recipient(email=getattr(user, "email"), fullname=getattr(user, "fullname"), phone=getattr(user, "phone"))],
+        recipients=[
+            Recipient(
+                email=email,
+                fullname=getattr(user, "fullname"),
+                phone=getattr(user, "phone"),
+                url=short_url,
+            )
+        ],
         type=NotifTypeEnum.EMAIL,
         subject="Welcome",
         priority=PriorityEnum.HIGH,
     )
     await queue.send(PriorityEnum.HIGH, "register", notification)
-    return user.__dict__
-    """return UserResponse(
+    return UserResponse(
         id=str(user.id),
         login=user.login,
         fullname=user.fullname,
@@ -112,5 +129,40 @@ async def register(
         allow_send_email=user.allow_send_email,
         confirmed_email=user.confirmed_email,
         created_at=user.created_at,
-        updated_at=user.updated_at
-    )"""
+        updated_at=user.updated_at,
+    )
+
+
+@router.get(
+    "/confirmed/{email}/{expire_time}/{redirect_url}",
+    responses={
+        int(HTTPStatus.OK): {
+            "model": UserResponse,
+            "description": "Successful Response",
+        },
+    },
+    summary="Подтверждение почтового адреса пользователя",
+    description="Подтверждение почтового адреса пользователя",
+    tags=["users"],
+)
+async def confirmed(
+    email: str,
+    expire_time: str,
+    redirect_url: str,
+    db: Session = Depends(get_db),
+) -> RedirectResponse:
+    exp: datetime = datetime.strptime(expire_time, "%Y-%m-%d %H:%M:%S.%f")
+    if datetime.now() > exp:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail="Превышено время ожидания"
+        )
+    user = db.query(User).filter_by(email=email).all()[0]
+    setattr(user, "confirmed_email", True)
+    db.commit()
+    return RedirectResponse(f"http://{redirect_url}")
+
+
+def make_tiny(url):
+    request_url = "http://tinyurl.com/api-create.php?" + urlencode({"url": url})
+    with contextlib.closing(urlopen(request_url)) as response:
+        return response.read().decode("utf-8 ")

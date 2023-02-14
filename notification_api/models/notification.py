@@ -1,5 +1,4 @@
 from enum import Enum
-from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -30,16 +29,13 @@ class Recipient(BaseModel):
         self,
         email: str = None,
         phone: str = None,
-        fullname: str = None
+        fullname: str = None,
+        url: str = None,
     ) -> None:
-        super().__init__(
-            email=email,
-            phone=phone,
-            fullname=fullname
-        )
+        super().__init__(email=email, phone=phone, fullname=fullname)
         # shortener = Connection(access_token="1ce341a12357a2e9976b6653c84d45ee4cc64cfb")
         # url = shortener.shorten(f"http://127.0.0.1/api/v1/users/confirmed/{email}/{datetime.now() + timedelta(hours=1)}/http://0.0.0.0")
-        self.data = {"url": "http://0.0.0.0"}
+        self.data = {"url": url}
 
 
 class Notification(BaseModel):
@@ -65,16 +61,24 @@ class Notification(BaseModel):
             subject=subject,
             template=template,
             recipients=recipients,
-            priority=priority
+            priority=priority,
         )
 
     @property
     def as_dict(self) -> dict:
         return {
             id: self.id,
-            'template': self.template,
-            'subject': self.subject,
-            'type': self.notif_type.value,
-            'priority': self.priority.value,
-            'recipients': [{'email': r.email, 'fullname': r.fullname, 'phone': r.phone, 'data': r.data} for r in self.recipients],
+            "template": self.template,
+            "subject": self.subject,
+            "type": self.notif_type.value,
+            "priority": self.priority.value,
+            "recipients": [
+                {
+                    "email": r.email,
+                    "fullname": r.fullname,
+                    "phone": r.phone,
+                    "data": r.data,
+                }
+                for r in self.recipients
+            ],
         }
