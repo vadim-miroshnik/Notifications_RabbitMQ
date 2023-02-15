@@ -34,7 +34,21 @@ services:
       MONGO__PORT: 27017
     env_file:
       - .env
+    build: ./notification_api/
 
+  worker:
+    container_name: worker
+    image: worker
+    networks:
+      - movies
+    env_file:
+      - .env
+    environment:
+      RABBITMQ__SERVER: rabbitmq
+      RABBITMQ__PORT: 5672
+    build: ./worker/
+    depends_on:
+      - rabbitmq
 
   postgres:
     container_name: postgres_container
@@ -58,11 +72,6 @@ services:
     image: rabbitmq:3.11.8-management
     hostname: rabbitmq
     restart: always
-    ports:
-     # The standard AMQP protocol port
-      - '5672:5672'
-      # HTTP management UI
-      - '15672:15672'
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ__USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ__PASSWORD}

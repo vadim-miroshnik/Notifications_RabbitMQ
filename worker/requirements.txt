@@ -1,2 +1,4 @@
 aio-pika==8.3.0
 Jinja2==3.1.2
+orjson==3.8.5
+pydantic[dotenv]==1.10.4

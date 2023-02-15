@@ -5,10 +5,11 @@ from email.message import EmailMessage
 
 import aio_pika
 import orjson
-from config import settings
 from jinja2 import Environment
-from models import Notification
 from pydantic import parse_obj_as
+
+from config import settings
+from models import Notification
 
 
 async def process_message(message: aio_pika.abc.AbstractIncomingMessage) -> None:
