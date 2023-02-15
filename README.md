@@ -4,7 +4,8 @@
 
     make prepare_environment
     make run_postgres
-    make create_django_superuser
+    python admin_panel/manage.py migrate
+    python admin_panel/manage.py collectstatic
     make run_project
 
 Запуск сервиса нотификации:

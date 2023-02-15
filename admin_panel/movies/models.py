@@ -49,11 +49,11 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         ],
     )
     type = models.CharField(verbose_name=_("types"), max_length=7, choices=TypeChoice.choices, default=TypeChoice.movie)
+
     class Meta:
         db_table = 'content"."filmwork'
-
-
-
+        verbose_name = _("film")
+        verbose_name_plural = _("films")
 
 class NotificationGroup(UUIDMixin):
     name = models.CharField(verbose_name=_("notification_group_name"), max_length=255)
@@ -63,21 +63,30 @@ class NotificationGroup(UUIDMixin):
 
     class Meta:
         db_table = 'content"."notificationgroup'
+        verbose_name = _("notification_group")
+        verbose_name_plural = _("notification_group_plural")
 
 
 class User(UUIDMixin, TimeStampedMixin):
-    fio = models.CharField(verbose_name=_("fio"), max_length=255)
+    fullname = models.CharField(verbose_name=_("fullname"), max_length=255, null=True)
+    login = models.CharField(verbose_name=_("login"), max_length=63)
+    password = models.TextField(verbose_name=_("password"), blank=True, null=True)
     email = models.CharField(verbose_name=_("user_email"), max_length=255, blank=True, null=True)
-    phone = models.CharField(verbose_name=_("user_phone"), max_length=10, blank=True, null=True)
+    phone = models.CharField(verbose_name=_("user_phone"), max_length=12, blank=True, null=True)
     allow_send_email = models.BooleanField(verbose_name=_("allow_send_email"), default=False)
-    notification_group = models.ManyToManyField(to=NotificationGroup, verbose_name=_("notification_group_name"), through="UserNotificationGroup")
+    confirmed_email = models.BooleanField(verbose_name=_("confirmed_email"), default=False)
+    notification_group = models.ManyToManyField(
+        to=NotificationGroup, verbose_name=_("notification_group_name"), through="UserNotificationGroup"
+    )
+    timezone = models.IntegerField(verbose_name=_("timezone"), default=0)
 
     def __str__(self):
-        return self.fio
+        return self.fullname
 
     class Meta:
         db_table = 'content"."user'
-
+        verbose_name = _("user")
+        verbose_name_plural = _("user_plural")
 
 
 class UserNotificationGroup(UUIDMixin, TimeStampedCreateMixin):
@@ -93,10 +102,27 @@ class UserNotificationGroup(UUIDMixin, TimeStampedCreateMixin):
                 fields=["user", "notification_user_group"], name="user_notification_user_group_idx"
             ),
         ]
+        verbose_name = _("user_notification_group")
+        verbose_name_plural = _("user_notification_group_plural")
 
 
-class EmailTemplate(UUIDMixin):
-    name = models.CharField(verbose_name=_("email_template_name"), max_length=255)
-    template = models.TextField(verbose_name=_("email_template"), blank=True, null=True)
+class Template(UUIDMixin):
+    class TemplateType(models.TextChoices):
+        EMAIL = "email", _("email")
+        PUSH = "push", _("push")
+        SMS = "sms", _("sms")
+
+    class TemplatePriority(models.TextChoices):
+        LOW = "low", _("low")
+        MEDIUM = "medium", _("medium")
+        HIGH = "high", _("high")
+
+    name = models.CharField(verbose_name=_("template_name"), max_length=255)
+    template = models.TextField(verbose_name=_("template"), blank=True, null=True)
+    type = models.CharField(verbose_name=_("type"), max_length=5, choices=TemplateType.choices, default=TemplateType.EMAIL)
+    priority = models.CharField(verbose_name=_("priority"), max_length=6, choices=TemplatePriority.choices, default=TemplatePriority.MEDIUM)
+
     class Meta:
-        db_table = 'content"."emailtemplate'
+        db_table = 'content"."template'
+        verbose_name = _("template")
+        verbose_name_plural = _("template_plural")

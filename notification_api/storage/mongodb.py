@@ -1,5 +1,6 @@
-from .interface import Storage
 from motor.motor_asyncio import AsyncIOMotorClient
+
+from .interface import Storage
 
 
 class Mongodb(Storage):
