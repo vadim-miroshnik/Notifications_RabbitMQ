@@ -87,7 +87,7 @@ async def add_person_notification(
     summary="Создать групповую рассылку",
     description="Создать групповую рассылку",
     tags=["notifications"],
-    dependencies=[Depends(auth)],
+    # dependencies=[Depends(auth)],
 )
 async def add_group_notifications(
     request: Request,
@@ -96,7 +96,9 @@ async def add_group_notifications(
     queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
-    user_id = request.state.user_id
+    user_id = "fafb419c-64f8-4fa7-b3ad-f75743a40c19" # request.state.user_id
+    data.group_id = "558955f1-354d-4895-99b3-dafab00f3cf0"
+    data.template_id = "5e1f60d1-dc9c-4bdc-a78a-0fd79860536c"
     id = str(uuid.uuid4())
     template = db.query(Template).filter_by(id=data.template_id).all()[0]
     links = (
@@ -143,7 +145,7 @@ async def add_group_notifications(
     summary="Получить ответ от пользователя",
     description="Получить ответ от пользователя",
     tags=["notifications"],
-    dependencies=[Depends(auth)],
+    # dependencies=[Depends(auth)],
 )
 async def reply_from_user(
     request: Request,
@@ -151,7 +153,7 @@ async def reply_from_user(
     email: str,
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
-    user_id = request.state.user_id
+    user_id = "fafb419c-64f8-4fa7-b3ad-f75743a40c19" # request.state.user_id
     await service.delivered(id, email)
     return NotifResponse(user_id=user_id, notif_id=id, notif_dt=datetime.datetime.now())
 
