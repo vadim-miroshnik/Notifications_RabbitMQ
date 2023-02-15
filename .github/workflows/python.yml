@@ -35,7 +35,8 @@ jobs:
 
       - name: Lint with mypy admin_panel
         run: |
-          mypy ./admin_panel --html-report reports/mypy-admin_panel --ignore-missing-imports
+          mypy ./admin_panel --html-report reports/mypy-admin_panel --ignore-missing-imports \
+            --exclude ./admin_panel/movies/migrations
 
       - name: Lint with mypy notification_api
         run: |
