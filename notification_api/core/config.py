@@ -3,9 +3,8 @@ import logging
 from logging import config as logging_config
 from pathlib import Path
 
-from pydantic import BaseSettings, BaseModel, Field
-
 from core.logger import LOGGING
+from pydantic import BaseModel, BaseSettings, Field
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -20,9 +19,24 @@ class Mongo(BaseModel):
     port: int = Field(27017)
 
 
+class Postgres(BaseSettings):
+    host: str = Field("127.0.0.1")
+    port: int = Field(5432)
+    db: str = Field("movies_database")
+    user: str = Field("app")
+    password: str = Field("123qwe")
+
+
+class Rabbit(BaseSettings):
+    host: str = Field("127.0.0.1")
+    port: int = Field(5672)
+
+
 class Settings(BaseSettings):
     notify_app: NotifyApp = Field(NotifyApp())
     mongo: Mongo = Field(Mongo())
+    postgres: Postgres = Field(Postgres())
+    rabbit: Rabbit = Field(Rabbit())
     project_name: str = Field("notification")
     debug: bool = Field(False)
 
