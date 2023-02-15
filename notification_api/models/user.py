@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from db.postgres import Base
-from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, String, Table
+from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, String, Table, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -33,7 +33,6 @@ class NotificationGroup(Base):
 
 class User(Base):
     __tablename__ = "user"
-    # __table_args__ = {"schema": "content"}
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -50,9 +49,7 @@ class User(Base):
     confirmed_email = Column(Boolean)
     created_at = Column(TIMESTAMP)
     updated_at = Column(TIMESTAMP)
-    """notification_group = relationship("NotificationGroup", secondary=user_notification,
-                                backref='User',
-                                lazy='dynamic')"""
+    timezone = Column(Integer)
     groups = relationship(
         "NotificationGroup",
         secondary=user_notification,
@@ -70,6 +67,7 @@ class User(Base):
         fullname=None,
         phone=None,
         subscribed=False,
+        timezone=0
     ):
         self.login = login
         self.password = password
@@ -80,6 +78,7 @@ class User(Base):
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()
         self.confirmed_email = False
+        self.timezone = timezone
 
     @property
     def as_dict(self) -> dict:
@@ -88,4 +87,5 @@ class User(Base):
             "fullname": self.fullname,
             "email": self.email,
             "phone": self.phone,
+            "timezone": self.timezone,
         }

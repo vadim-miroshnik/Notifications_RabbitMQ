@@ -24,6 +24,7 @@ class Recipient(BaseModel):
     phone: str | None = None
     fullname: str | None = None
     data: dict | None = None
+    timezone: int = 0
 
     def __init__(
         self,
@@ -32,12 +33,14 @@ class Recipient(BaseModel):
         fullname: str = None,
         url: str = None,
         data: dict = None,
+        timezone:int = 0
     ) -> None:
         super().__init__(email=email, phone=phone, fullname=fullname)
         # shortener = Connection(access_token="1ce341a12357a2e9976b6653c84d45ee4cc64cfb")
         # url = shortener.shorten(f"http://127.0.0.1/api/v1/users/confirmed/{email}/{datetime.now() + timedelta(hours=1)}/http://0.0.0.0")
         data["url"] = url
         self.data = data
+        self.timezone = timezone
 
 
 class Notification(BaseModel):
@@ -80,6 +83,7 @@ class Notification(BaseModel):
                     "fullname": r.fullname,
                     "phone": r.phone,
                     "data": r.data,
+                    "timezone": r.timezone
                 }
                 for r in self.recipients
             ],
