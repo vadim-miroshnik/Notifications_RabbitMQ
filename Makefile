@@ -41,6 +41,13 @@ run_notification_container:
 		-f docker-compose.override.yml \
  		up --build notification
 
+run_worker:
+	docker compose \
+		-f docker-compose_network.yml \
+ 		-f docker-compose.yml \
+		-f docker-compose.override.yml \
+ 		up --build worker
+
 create_django_superuser:
 	python3 admin_panel/manage.py createsuperuser
 

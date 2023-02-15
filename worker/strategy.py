@@ -2,9 +2,11 @@ import smtplib
 import ssl
 from abc import ABCMeta, abstractmethod
 from email.message import EmailMessage
-from models import Notification
-from config import settings
+
 from jinja2 import Environment
+
+from config import settings
+from models import Notification
 
 
 class Message:
