@@ -65,6 +65,7 @@ async def add_person_notification(
                 phone=getattr(user, "phone"),
                 url=short_url,
                 data=data.data,
+                timezone=getattr(user, "timezone"),
             )
         ],
         type=getattr(template, "type"),
@@ -117,6 +118,7 @@ async def add_group_notifications(
                 phone=getattr(user, "phone"),
                 url=short_url,
                 data=data.data,
+                timezone=getattr(user, "timezone"),
             )
             recipients.append(recipient)
     notification = Notification(
