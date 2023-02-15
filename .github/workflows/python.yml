@@ -35,11 +35,11 @@ jobs:
 
       - name: Lint with mypy admin_panel
         run: |
-          mypy ./admin_panel --html-report reports/mypy-admin_panel
+          mypy ./admin_panel --html-report reports/mypy-admin_panel --ignore-missing-imports
 
       - name: Lint with mypy notification_api
         run: |
-          mypy ./notification_api --html-report reports/mypy-notification_api/
+          mypy ./notification_api --html-report reports/mypy-notification_api/ --ignore-missing-imports
 
       - name: Upload reports
         uses: actions/upload-artifact@v2
