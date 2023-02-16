@@ -3,7 +3,6 @@ from aio_pika.abc import AbstractRobustConnection
 
 
 class QueueService:
-
     def __init__(self, connection: AbstractRobustConnection):
         self.connection = connection
 

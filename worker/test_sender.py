@@ -15,11 +15,15 @@ async def main() -> None:
     async with connection:
         channel = await connection.channel()
         exchange = await channel.declare_exchange(name="Ex")
-        msg = Notification(notif_type=NotifTypeEnum.EMAIL,
-                           subject="subj",
-                           template="{{ title }} {{ text }}",
-                           content_data=[{"title": "Hello", "text": "test"}, ],
-                           recepients=["aka.fall3n@gmail.com"])
+        msg = Notification(
+            notif_type=NotifTypeEnum.EMAIL,
+            subject="subj",
+            template="{{ title }} {{ text }}",
+            content_data=[
+                {"title": "Hello", "text": "test"},
+            ],
+            recepients=["aka.fall3n@gmail.com"],
+        )
         await exchange.publish(message=aio_pika.Message(body=orjson.dumps(msg.dict())), routing_key="messages")
 
 

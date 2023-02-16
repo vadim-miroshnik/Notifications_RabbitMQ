@@ -1,8 +1,9 @@
 import uuid
 
-from db.postgres import Base
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
+
+from db.postgres import Base
 
 
 class Template(Base):

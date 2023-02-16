@@ -1,18 +1,16 @@
 # import pika
-import aio_pika
 import uvicorn
+from fastapi import FastAPI
+from fastapi.openapi.utils import get_openapi
+from fastapi.responses import ORJSONResponse
+
 from api.v1 import notifications, users
 from core.config import settings
 from db import mongodb
 from db.postgres import db
 from db.queue import rabbitmq
-from fastapi import FastAPI
-from fastapi.openapi.utils import get_openapi
-from fastapi.responses import ORJSONResponse
 
 # from pika import BlockingConnection
-
-
 
 
 app = FastAPI(
@@ -65,9 +63,7 @@ async def shutdown_event():
     await mongodb.mongodb.close()
 
 
-app.include_router(
-    notifications.router, prefix="/api/v1/notifications", tags=["notifications"]
-)
+app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 
 

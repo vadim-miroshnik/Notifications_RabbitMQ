@@ -1,10 +1,11 @@
 import datetime
 import uuid
 
-from db.postgres import Base
 from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, String, Table, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
+from db.postgres import Base
 
 user_notification = Table(
     "UserNotificationUserGroup",
@@ -54,21 +55,11 @@ class User(Base):
         "NotificationGroup",
         secondary=user_notification,
         primaryjoin=id == user_notification.c.user_id,
-        secondaryjoin=NotificationGroup.id
-        == user_notification.c.notification_user_group_id,
+        secondaryjoin=NotificationGroup.id == user_notification.c.notification_user_group_id,
         backref="users",
     )
 
-    def __init__(
-        self,
-        login=None,
-        password=None,
-        email=None,
-        fullname=None,
-        phone=None,
-        subscribed=False,
-        timezone=0
-    ):
+    def __init__(self, login=None, password=None, email=None, fullname=None, phone=None, subscribed=False, timezone=0):
         self.login = login
         self.password = password
         self.email = email

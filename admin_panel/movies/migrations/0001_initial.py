@@ -10,97 +10,149 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Filmwork',
+            name="Filmwork",
             fields=[
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('title', models.CharField(max_length=255, verbose_name='title')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='description')),
-                ('creation_date', models.DateField(blank=True, null=True, verbose_name='created_date')),
-                ('rating', models.FloatField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)], verbose_name='rating')),
-                ('type', models.CharField(choices=[('movie', 'movie'), ('tv_show', 'tv_show')], default='movie', max_length=7, verbose_name='types')),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ("title", models.CharField(max_length=255, verbose_name="title")),
+                ("description", models.TextField(blank=True, null=True, verbose_name="description")),
+                ("creation_date", models.DateField(blank=True, null=True, verbose_name="created_date")),
+                (
+                    "rating",
+                    models.FloatField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(100),
+                        ],
+                        verbose_name="rating",
+                    ),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[("movie", "movie"), ("tv_show", "tv_show")],
+                        default="movie",
+                        max_length=7,
+                        verbose_name="types",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'film',
-                'verbose_name_plural': 'films',
-                'db_table': 'content"."filmwork',
+                "verbose_name": "film",
+                "verbose_name_plural": "films",
+                "db_table": 'content"."filmwork',
             },
         ),
         migrations.CreateModel(
-            name='NotificationGroup',
+            name="NotificationGroup",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255, verbose_name='notification_group_name')),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ("name", models.CharField(max_length=255, verbose_name="notification_group_name")),
             ],
             options={
-                'verbose_name': 'notification_group',
-                'verbose_name_plural': 'notification_group_plural',
-                'db_table': 'content"."notificationgroup',
+                "verbose_name": "notification_group",
+                "verbose_name_plural": "notification_group_plural",
+                "db_table": 'content"."notificationgroup',
             },
         ),
         migrations.CreateModel(
-            name='Template',
+            name="Template",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255, verbose_name='template_name')),
-                ('template', models.TextField(blank=True, null=True, verbose_name='template')),
-                ('type', models.CharField(choices=[('email', 'email'), ('push', 'push'), ('sms', 'sms')], default='email', max_length=5, verbose_name='type')),
-                ('priority', models.CharField(choices=[('low', 'low'), ('medium', 'medium'), ('high', 'high')], default='medium', max_length=6, verbose_name='priority')),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ("name", models.CharField(max_length=255, verbose_name="template_name")),
+                ("template", models.TextField(blank=True, null=True, verbose_name="template")),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[("email", "email"), ("push", "push"), ("sms", "sms")],
+                        default="email",
+                        max_length=5,
+                        verbose_name="type",
+                    ),
+                ),
+                (
+                    "priority",
+                    models.CharField(
+                        choices=[("low", "low"), ("medium", "medium"), ("high", "high")],
+                        default="medium",
+                        max_length=6,
+                        verbose_name="priority",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'template',
-                'verbose_name_plural': 'template_plural',
-                'db_table': 'content"."template',
+                "verbose_name": "template",
+                "verbose_name_plural": "template_plural",
+                "db_table": 'content"."template',
             },
         ),
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('fullname', models.CharField(max_length=255, null=True, verbose_name='fullname')),
-                ('login', models.CharField(max_length=63, verbose_name='login')),
-                ('password', models.TextField(blank=True, null=True, verbose_name='password')),
-                ('email', models.CharField(blank=True, max_length=255, null=True, verbose_name='user_email')),
-                ('phone', models.CharField(blank=True, max_length=12, null=True, verbose_name='user_phone')),
-                ('allow_send_email', models.BooleanField(default=False, verbose_name='allow_send_email')),
-                ('confirmed_email', models.BooleanField(default=False, verbose_name='confirmed_email')),
-                ('timezone', models.IntegerField(default=0, verbose_name="timezone")),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ("fullname", models.CharField(max_length=255, null=True, verbose_name="fullname")),
+                ("login", models.CharField(max_length=63, verbose_name="login")),
+                ("password", models.TextField(blank=True, null=True, verbose_name="password")),
+                ("email", models.CharField(blank=True, max_length=255, null=True, verbose_name="user_email")),
+                ("phone", models.CharField(blank=True, max_length=12, null=True, verbose_name="user_phone")),
+                ("allow_send_email", models.BooleanField(default=False, verbose_name="allow_send_email")),
+                ("confirmed_email", models.BooleanField(default=False, verbose_name="confirmed_email")),
+                ("timezone", models.IntegerField(default=0, verbose_name="timezone")),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'user_plural',
-                'db_table': 'content"."user',
+                "verbose_name": "user",
+                "verbose_name_plural": "user_plural",
+                "db_table": 'content"."user',
             },
         ),
         migrations.CreateModel(
-            name='UserNotificationGroup',
+            name="UserNotificationGroup",
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('notification_user_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.notificationgroup', verbose_name='notification_group')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='movies.user', verbose_name='user')),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                (
+                    "notification_user_group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="movies.notificationgroup",
+                        verbose_name="notification_group",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="movies.user", verbose_name="user"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'user_notification_group',
-                'verbose_name_plural': 'user_notification_group_plural',
-                'db_table': 'content"."UserNotificationUserGroup',
+                "verbose_name": "user_notification_group",
+                "verbose_name_plural": "user_notification_group_plural",
+                "db_table": 'content"."UserNotificationUserGroup',
             },
         ),
         migrations.AddField(
-            model_name='user',
-            name='notification_group',
-            field=models.ManyToManyField(through='movies.UserNotificationGroup', to='movies.notificationgroup', verbose_name='notification_group_name'),
+            model_name="user",
+            name="notification_group",
+            field=models.ManyToManyField(
+                through="movies.UserNotificationGroup",
+                to="movies.notificationgroup",
+                verbose_name="notification_group_name",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='usernotificationgroup',
-            constraint=models.UniqueConstraint(fields=('user', 'notification_user_group'), name='user_notification_user_group_idx'),
+            model_name="usernotificationgroup",
+            constraint=models.UniqueConstraint(
+                fields=("user", "notification_user_group"), name="user_notification_user_group_idx"
+            ),
         ),
     ]

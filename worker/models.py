@@ -4,8 +4,8 @@ from pydantic import BaseModel
 
 
 class NotifTypeEnum(str, Enum):
-    EMAIL = 'email'
-    WEBSOCKET = 'websocket'
+    EMAIL = "email"
+    WEBSOCKET = "websocket"
 
 
 class Notification(BaseModel):

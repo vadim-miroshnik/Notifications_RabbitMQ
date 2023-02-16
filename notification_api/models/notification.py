@@ -3,6 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+
 # from bitly_api import Connection
 # from datetime import datetime, timedelta
 
@@ -33,7 +34,7 @@ class Recipient(BaseModel):
         fullname: str = None,
         url: str = None,
         data: dict = None,
-        timezone:int = 0
+        timezone: int = 0,
     ) -> None:
         super().__init__(email=email, phone=phone, fullname=fullname)
         # shortener = Connection(access_token="1ce341a12357a2e9976b6653c84d45ee4cc64cfb")
@@ -78,13 +79,7 @@ class Notification(BaseModel):
             "type": self.notif_type.value,
             "priority": self.priority.value,
             "recipients": [
-                {
-                    "email": r.email,
-                    "fullname": r.fullname,
-                    "phone": r.phone,
-                    "data": r.data,
-                    "timezone": r.timezone
-                }
+                {"email": r.email, "fullname": r.fullname, "phone": r.phone, "data": r.data, "timezone": r.timezone}
                 for r in self.recipients
             ],
         }

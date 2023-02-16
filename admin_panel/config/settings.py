@@ -21,6 +21,7 @@ from pydantic import BaseSettings, BaseModel, Field
 ADMIN_PATH = Path(__file__).resolve().parent.parent
 BASE_DIR = ADMIN_PATH.parent
 
+
 class Postgres(BaseModel):
     user: str
     password: str
@@ -132,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'ru-RU'
+LANGUAGE_CODE = "ru-RU"
 
 TIME_ZONE = "UTC"
 
@@ -151,4 +152,4 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOCALE_PATHS = [ADMIN_PATH.joinpath('movies/locale')]
+LOCALE_PATHS = [ADMIN_PATH.joinpath("movies/locale")]

@@ -55,6 +55,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         verbose_name = _("film")
         verbose_name_plural = _("films")
 
+
 class NotificationGroup(UUIDMixin):
     name = models.CharField(verbose_name=_("notification_group_name"), max_length=255)
 
@@ -119,8 +120,12 @@ class Template(UUIDMixin):
 
     name = models.CharField(verbose_name=_("template_name"), max_length=255)
     template = models.TextField(verbose_name=_("template"), blank=True, null=True)
-    type = models.CharField(verbose_name=_("type"), max_length=5, choices=TemplateType.choices, default=TemplateType.EMAIL)
-    priority = models.CharField(verbose_name=_("priority"), max_length=6, choices=TemplatePriority.choices, default=TemplatePriority.MEDIUM)
+    type = models.CharField(
+        verbose_name=_("type"), max_length=5, choices=TemplateType.choices, default=TemplateType.EMAIL
+    )
+    priority = models.CharField(
+        verbose_name=_("priority"), max_length=6, choices=TemplatePriority.choices, default=TemplatePriority.MEDIUM
+    )
 
     class Meta:
         db_table = 'content"."template'
