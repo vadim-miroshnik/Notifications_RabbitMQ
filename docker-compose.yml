@@ -55,6 +55,16 @@ services:
     depends_on:
       - rabbitmq
 
+  scheduler:
+    container_name: scheduler
+    image: scheduler
+    networks:
+      - movies
+    environment:
+      NOTIFICATION_API: notification
+      NOTIFICATION_PORT: 8000
+    build: ./scheduler/
+
   postgres:
     container_name: postgres_container
     env_file:

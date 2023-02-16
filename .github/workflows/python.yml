@@ -40,7 +40,7 @@ jobs:
 
       - name: Lint with mypy notification_api
         run: |
-          mypy ./notification_api --html-report reports/mypy-notification_api/ --ignore-missing-imports
+          mypy ./notification_api --html-report reports/mypy-notification_api/
 
       - name: Upload reports
         uses: actions/upload-artifact@v2
