@@ -4,6 +4,8 @@ from functools import lru_cache
 import aio_pika
 from aio_pika.abc import AbstractRobustConnection
 from fastapi import Depends
+
+from core.config import settings
 from storage.queue import QueueService
 
 rabbitmq: AbstractRobustConnection | None = None
@@ -14,7 +16,11 @@ async def get_rabbitmq():
     while True:
         try:
             rabbitmq = await aio_pika.connect_robust(
-                "amqp://guest:guest@rabbitmq:5672", loop=asyncio.get_event_loop()
+                host=settings.rabbitmq.server,
+                port=settings.rabbitmq.port,
+                login=settings.rabbitmq.user,
+                password=settings.rabbitmq.password,
+                loop=asyncio.get_event_loop(),
             )
             break
         except ConnectionError as e:

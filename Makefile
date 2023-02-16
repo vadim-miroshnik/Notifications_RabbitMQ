@@ -48,6 +48,14 @@ run_worker:
 		-f docker-compose.override.yml \
  		up --build worker
 
+run_scheduler:
+	docker compose \
+		-f docker-compose_network.yml \
+ 		-f docker-compose.yml \
+		-f docker-compose.override.yml \
+ 		up --build scheduler
+
+
 create_django_superuser:
 	python3 admin_panel/manage.py createsuperuser
 

@@ -27,16 +27,18 @@ class Postgres(BaseSettings):
     password: str = Field("123qwe")
 
 
-class Rabbit(BaseSettings):
-    host: str = Field("127.0.0.1")
+class Rabbitmq(BaseModel):
+    server: str = Field("127.0.0.1")
     port: int = Field(5672)
+    user: str = Field("guest")
+    password: str = Field("guest")
 
 
 class Settings(BaseSettings):
     notify_app: NotifyApp = Field(NotifyApp())
     mongo: Mongo = Field(Mongo())
     postgres: Postgres = Field(Postgres())
-    rabbit: Rabbit = Field(Rabbit())
+    rabbitmq: Rabbitmq = Field(Rabbitmq())
     project_name: str = Field("notification")
     debug: bool = Field(False)
 

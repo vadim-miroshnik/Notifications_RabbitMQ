@@ -65,3 +65,13 @@ https://github.com/dimkaddi/notifications_sprint_1
 
     make down
 
+## Компонент планировщика
+Формирует задачу на email-рассылку для пользователей, входящих в группу common с темплейтом "RegularNotify" каждую пятницу в 17:00
+
+Запуск:
+
+    make run_scheduler
+
+Остановка всех контейнеров:
+
+    make down
