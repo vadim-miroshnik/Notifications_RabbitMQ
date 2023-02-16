@@ -88,7 +88,6 @@ async def add_person_notification(
     summary="Создать групповую рассылку",
     description="Создать групповую рассылку",
     tags=["notifications"],
-    dependencies=[Depends(auth)],
 )
 async def add_group_notifications(
     request: Request,
@@ -97,7 +96,6 @@ async def add_group_notifications(
     queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
-    user_id = request.state.user_id
     id = str(uuid.uuid4())
     template = db.query(Template).filter_by(id=data.template_id).all()[0]
     links = (
@@ -131,7 +129,8 @@ async def add_group_notifications(
     )
     await queue.send(data.priority, "notification", notification)
     await service.add(notification)
-    return NotifResponse(user_id=user_id, notif_id=id, notif_dt=datetime.datetime.now())
+    return NotifResponse(notif_id=id, notif_dt=datetime.datetime.now())
+
 
 
 @router.get(

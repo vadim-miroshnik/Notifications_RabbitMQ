@@ -72,6 +72,7 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(blank=True, max_length=12, null=True, verbose_name='user_phone')),
                 ('allow_send_email', models.BooleanField(default=False, verbose_name='allow_send_email')),
                 ('confirmed_email', models.BooleanField(default=False, verbose_name='confirmed_email')),
+                ('timezone', models.IntegerField(default=0, verbose_name="timezone")),
             ],
             options={
                 'verbose_name': 'user',

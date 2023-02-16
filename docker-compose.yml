@@ -32,6 +32,10 @@ services:
       APP__ALGORITHM: HS256
       MONGO__HOST: mongos1
       MONGO__PORT: 27017
+      POSTGRES__HOST: postgres
+      RABBITMQ__SERVER: rabbitmq
+      RABBITMQ__USER: ${RABBITMQ__USER}
+      RABBITMQ__PASSWORD: ${RABBITMQ__PASSWORD}
     env_file:
       - .env
     build: ./notification_api/
@@ -45,7 +49,8 @@ services:
       - .env
     environment:
       RABBITMQ__SERVER: rabbitmq
-      RABBITMQ__PORT: 5672
+      RABBITMQ__USER: ${RABBITMQ__USER}
+      RABBITMQ__PASSWORD: ${RABBITMQ__PASSWORD}
     build: ./worker/
     depends_on:
       - rabbitmq

@@ -24,6 +24,10 @@ class UserNotificationGroupInline(admin.TabularInline):
     extra = 3
 
 
+@admin.register(NotificationGroup)
+class NotificationUserGroupAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     inlines = (UserNotificationGroupInline,)
@@ -45,5 +49,5 @@ class UserAdmin(admin.ModelAdmin):
 
 
 @admin.register(Template)
-class NotificationUserGroupAdmin(admin.ModelAdmin):
+class TemplateAdmin(admin.ModelAdmin):
     list_display = ("name", "type", "priority")
