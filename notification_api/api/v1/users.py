@@ -6,19 +6,18 @@ from http import HTTPStatus
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse
+from sqlalchemy.orm import Session
+
 from auth.auth_bearer import auth
 from auth.auth_handler import encode_jwt
 from db.postgres import get_db
 from db.queue import get_queue_service
-from fastapi import APIRouter, Body, Depends, HTTPException, Request
-from fastapi.responses import RedirectResponse
-from models.notification import (Notification, NotifTypeEnum, PriorityEnum,
-                                 Recipient)
+from models.notification import Notification, NotifTypeEnum, PriorityEnum, Recipient
 from models.template import Template
 from models.user import User
-from sqlalchemy.orm import Session
 from storage.queue import QueueService
-
 from .schemas import UserRequest, UserResponse
 
 router = APIRouter()
@@ -155,9 +154,7 @@ async def confirmed(
 ) -> RedirectResponse:
     exp: datetime = datetime.strptime(expire_time, "%Y-%m-%d %H:%M:%S.%f")
     if datetime.now() > exp:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail="Превышено время ожидания"
-        )
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Превышено время ожидания")
     user = db.query(User).filter_by(email=email).all()[0]
     setattr(user, "confirmed_email", True)
     db.commit()

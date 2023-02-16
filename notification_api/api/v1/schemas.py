@@ -1,8 +1,9 @@
 from datetime import datetime
 from uuid import UUID
 
-from models.notification import NotifTypeEnum, PriorityEnum
 from pydantic import BaseModel
+
+from models.notification import NotifTypeEnum, PriorityEnum
 
 
 class UUIDMixin(BaseModel):

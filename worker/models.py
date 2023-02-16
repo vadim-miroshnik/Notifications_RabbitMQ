@@ -29,3 +29,4 @@ class Notification(BaseModel):
     template: str | None = None
     recipients: list[Recipient] = []
     priority: PriorityEnum = PriorityEnum.LOW
+
