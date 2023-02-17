@@ -1,4 +1,3 @@
-# import pika
 import uvicorn
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
@@ -9,8 +8,6 @@ from core.config import settings
 from db import mongodb
 from db.postgres import db
 from db.queue import rabbitmq
-
-# from pika import BlockingConnection
 
 
 app = FastAPI(
@@ -48,11 +45,6 @@ app.openapi = custom_openapi
 
 @app.on_event("startup")
 async def startup_event():
-    # todo use env variables
-    # credentials = pika.PlainCredentials("guest", "guest")
-    # rabbitmq = pika.BlockingConnection(
-    #    pika.ConnectionParameters(host=settings.rabbit.host, port=settings.rabbit.port, credentials=credentials)
-    # )
     pass
 
 
