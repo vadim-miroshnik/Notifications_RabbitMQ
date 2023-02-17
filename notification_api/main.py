@@ -50,7 +50,7 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    rabbitmq.close()
+    await rabbitmq.close()
     db.close()
     await mongodb.mongodb.close()
 
