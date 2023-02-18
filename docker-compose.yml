@@ -63,6 +63,8 @@ services:
     environment:
       NOTIFICATION_API: notification
       NOTIFICATION_PORT: 8000
+      ID_COMMON_GROUP: 9fe7e975-a8e9-4387-9dc3-c92770ffd1cb
+      ID_REGULAR_TEMPLATE: 7dfba2c1-4057-4ef7-a85d-452aae23d428
     build: ./scheduler/
 
   postgres:
