@@ -6,9 +6,9 @@ from fastapi.responses import ORJSONResponse
 from api.v1 import notifications, users
 from core.config import settings
 from db.postgres import db
-from db.queue import rabbitmq
-from motor.motor_asyncio import AsyncIOMotorClient
-from db import mongodb
+
+from db.queue import get_rabbitmq, close_rabbitmq
+
 
 app = FastAPI(
     title=settings.project_name,
@@ -45,19 +45,19 @@ app.openapi = custom_openapi
 
 @app.on_event("startup")
 async def startup_event():
-    mongodb.mongoclient = AsyncIOMotorClient(
-        f"mongodb://{settings.mongo.host}:{settings.mongo.port}/?serverSelectionTimeoutMS=2000&directConnection=true&uuidRepresentation=standard"
-    )
+    get_rabbitmq()
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    await rabbitmq.close()
+    close_rabbitmq()
     await db.close()
-    await mongodb.mongoclient.close()
+    await mongodb.mongodb.close()
 
 
-app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
+app.include_router(
+    notifications.router, prefix="/api/v1/notifications", tags=["notifications"]
+)
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 
 
