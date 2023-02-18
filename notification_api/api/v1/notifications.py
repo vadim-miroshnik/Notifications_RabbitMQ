@@ -1,23 +1,22 @@
-import contextlib
+import httpx
 import datetime
 import uuid
 from http import HTTPStatus
 from urllib.parse import urlencode
-from urllib.request import urlopen
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
-from sqlalchemy.orm import Session
 
 from auth.auth_bearer import auth
 from db.mongodb import get_mongodb_notifications
-from db.postgres import get_db
+from db.postgres import get_db, get_db_service
 from db.queue import get_queue_service
 from models.notification import Notification, Recipient
-from models.template import Template
-from models.user import User, user_notification
 from services.notifications import NotificationsService
+from services.db import DBService
 from storage.queue import QueueService
 from .schemas import NotifRequest, NotifResponse
+from core.config import settings
+
 
 router = APIRouter()
 
@@ -38,22 +37,22 @@ router = APIRouter()
 async def add_person_notification(
     request: Request,
     data: NotifRequest = Body(default=None),
-    db: Session = Depends(get_db),
+    db: DBService = Depends(get_db_service),
     queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
     user_id = request.state.user_id
-    user = db.query(User).filter_by(id=data.user_id).all()[0]
+    user = await db.get_user(user_id)
     if not getattr(user, "allow_send_email"):
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail="Пользователь не подписан на получение уведомлений",
         )
-    template = db.query(Template).filter_by(id=data.template_id).all()[0]
+    template = await db.get_template(data.template_id)
     id = str(uuid.uuid4())
     email = getattr(user, "email")
-    url = f"http://0.0.0.0:8000/api/v1/notifications/reply/{id}/{email}"
-    short_url = make_tiny(url)
+    url = f"{settings.notify_app.reply_url}/{id}/{email}"
+    short_url = await make_tiny(url)
     notification = Notification(
         id=id,
         template=getattr(template, "template"),
@@ -91,20 +90,20 @@ async def add_person_notification(
 async def add_group_notifications(
     request: Request,
     data: NotifRequest = Body(default=None),
-    db: Session = Depends(get_db),
+    db: DBService = Depends(get_db_service),
     queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
     id = str(uuid.uuid4())
-    template = db.query(Template).filter_by(id=data.template_id).all()[0]
-    links = db.query(user_notification).filter_by(notification_user_group_id=data.group_id).all()
+    template = await db.get_template(data.template_id)
+    links = await db.get_users_by_group(data.group_id)
     recipients = []
     for l in links:
-        user = db.query(User).filter_by(id=l.user_id).first()
+        user = await db.get_user(l.user_id)
         if getattr(user, "allow_send_email"):
             email = getattr(user, "email")
-            url = f"http://0.0.0.0:8000/api/v1/notifications/reply/{id}/{email}"
-            short_url = make_tiny(url)
+            url = f"{settings.notify_app.reply_url}/{id}/{email}"
+            short_url = await make_tiny(url)
             recipient = Recipient(
                 email=email,
                 fullname=getattr(user, "fullname"),
@@ -151,7 +150,8 @@ async def reply_from_user(
     return NotifResponse(user_id=user_id, notif_id=id, notif_dt=datetime.datetime.now())
 
 
-def make_tiny(url):
+async def make_tiny(url):
     request_url = "http://tinyurl.com/api-create.php?" + urlencode({"url": url})
-    with contextlib.closing(urlopen(request_url)) as response:
-        return response.read().decode("utf-8 ")
+    async with httpx.AsyncClient() as client:
+        response = await client.get(request_url)
+        return response.text

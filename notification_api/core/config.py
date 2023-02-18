@@ -13,7 +13,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 class NotifyApp(BaseModel):
     jwt_secret_key: str = Field("someword")
     algorithm: str = Field("HS256")
-
+    reply_url: str = Field("http://0.0.0.0:8000/api/v1/notifications/reply")
+    confirmed_url: str = Field("http://0.0.0.0:8000/api/v1/users/confirmed")
 
 class Mongo(BaseModel):
     host: str = Field("127.0.0.1")

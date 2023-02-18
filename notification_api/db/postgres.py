@@ -1,19 +1,17 @@
 from functools import lru_cache
-
-from fastapi_utils.guid_type import setup_guids_postgresql
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
+from services.db import DBService
 from core.config import settings
 
-POSTGRES_URL = f"postgresql://{settings.postgres.user}:{settings.postgres.password}@{settings.postgres.host}:{settings.postgres.port}/{settings.postgres.db}"
+POSTGRES_URL = f"postgresql+asyncpg://{settings.postgres.user}:{settings.postgres.password}@{settings.postgres.host}:{settings.postgres.port}/{settings.postgres.db}"
 
-engine = create_engine(POSTGRES_URL, echo=True)
+engine = create_async_engine(POSTGRES_URL, echo=True)
 
-setup_guids_postgresql(engine)
+# setup_guids_postgresql(engine)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
 
 Base = declarative_base()
 
@@ -21,5 +19,10 @@ db = SessionLocal()
 
 
 @lru_cache()
-def get_db():
-    return db
+async def get_db() -> AsyncSession:
+    return SessionLocal()
+
+
+@lru_cache()
+def get_db_service() -> DBService:
+    return DBService(db)
