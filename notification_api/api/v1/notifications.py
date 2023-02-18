@@ -5,16 +5,14 @@ from http import HTTPStatus
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
-from sqlalchemy.orm import Session
 
 from auth.auth_bearer import auth
 from db.mongodb import get_mongodb_notifications
-from db.postgres import get_db
+from db.postgres import get_db, get_db_service
 from db.queue import get_queue_service
 from models.notification import Notification, Recipient
-from models.template import Template
-from models.user import User, user_notification
 from services.notifications import NotificationsService
+from services.db import DBService
 from storage.queue import QueueService
 from .schemas import NotifRequest, NotifResponse
 from core.config import settings
@@ -39,18 +37,22 @@ router = APIRouter()
 async def add_person_notification(
     request: Request,
     data: NotifRequest = Body(default=None),
-    db: Session = Depends(get_db),
+    #db: Session = Depends(get_db),
+    db: DBService = Depends(get_db_service),
     queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
     user_id = request.state.user_id
-    user = db.query(User).filter_by(id=data.user_id).all()[0]
+    db = await db
+    user = await db.get_user(user_id)
+    #user = db.query(User).filter_by(id=data.user_id).all()[0]
     if not getattr(user, "allow_send_email"):
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail="Пользователь не подписан на получение уведомлений",
         )
-    template = db.query(Template).filter_by(id=data.template_id).all()[0]
+    template = await db.get_template(data.template_id)
+    #template = db.query(Template).filter_by(id=data.template_id).all()[0]
     id = str(uuid.uuid4())
     email = getattr(user, "email")
     url = f"{settings.notify_app.reply_url}/{id}/{email}"
@@ -92,16 +94,19 @@ async def add_person_notification(
 async def add_group_notifications(
     request: Request,
     data: NotifRequest = Body(default=None),
-    db: Session = Depends(get_db),
+    db: DBService = Depends(get_db_service),
     queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
     id = str(uuid.uuid4())
-    template = db.query(Template).filter_by(id=data.template_id).all()[0]
-    links = db.query(user_notification).filter_by(notification_user_group_id=data.group_id).all()
+    data.group_id = "558955f1-354d-4895-99b3-dafab00f3cf0"
+    data.template_id = "5e1f60d1-dc9c-4bdc-a78a-0fd79860536c"
+    db = await db
+    template = await db.get_template(data.template_id)
+    links = await db.get_users_by_group(data.group_id)
     recipients = []
     for l in links:
-        user = db.query(User).filter_by(id=l.user_id).first()
+        user = await db.get_user(l.user_id)
         if getattr(user, "allow_send_email"):
             email = getattr(user, "email")
             url = f"{settings.notify_app.reply_url}/{id}/{email}"

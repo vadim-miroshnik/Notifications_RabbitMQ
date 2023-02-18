@@ -39,8 +39,9 @@ class Recipient(BaseModel):
         super().__init__(email=email, phone=phone, fullname=fullname)
         # shortener = Connection(access_token="1ce341a12357a2e9976b6653c84d45ee4cc64cfb")
         # url = shortener.shorten(f"http://127.0.0.1/api/v1/users/confirmed/{email}/{datetime.now() + timedelta(hours=1)}/http://0.0.0.0")
-        data["url"] = url
-        self.data = data
+        if not data:
+            self.data = dict()
+        self.data["url"] = url
         self.timezone = timezone
 
 
@@ -79,7 +80,8 @@ class Notification(BaseModel):
             "type": self.notif_type.value,
             "priority": self.priority.value,
             "recipients": [
-                {"email": r.email, "fullname": r.fullname, "phone": r.phone, "data": r.data, "timezone": r.timezone}
+                #{"email": r.email, "fullname": r.fullname, "phone": r.phone, "data": r.data, "timezone": r.timezone}
+                {"email": r.email, "fullname": r.fullname, "phone": r.phone, "data": r.data}
                 for r in self.recipients
             ],
         }

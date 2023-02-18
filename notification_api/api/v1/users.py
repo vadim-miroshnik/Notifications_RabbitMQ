@@ -7,18 +7,16 @@ from urllib.parse import urlencode
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
-from sqlalchemy.orm import Session
 
 from auth.auth_bearer import auth
 from auth.auth_handler import encode_jwt
-from db.postgres import get_db
+from db.postgres import get_db_service
 from db.queue import get_queue_service
 from models.notification import Notification, NotifTypeEnum, PriorityEnum, Recipient
-from models.template import Template
-from models.user import User
 from storage.queue import QueueService
 from .schemas import UserRequest, UserResponse
 from core.config import settings
+from services.db import DBService
 
 
 router = APIRouter()
@@ -35,16 +33,16 @@ router = APIRouter()
     summary="Разрешить/запретить рассылку",
     description="Разрешить/запретить рассылку",
     tags=["users"],
-    dependencies=[Depends(auth)],
+    #dependencies=[Depends(auth)],
 )
 async def enable_notifications(
     request: Request,
-    db: Session = Depends(get_db),
+    db: DBService = Depends(get_db_service),
 ) -> UserResponse:
-    user_id = request.state.user_id
-    user = db.query(User).filter_by(id=user_id).all()[0]
-    setattr(user, "allow_send_email", True)
-    db.commit()
+    #user_id = request.state.user_id
+    user_id = "96d9707e-0600-4eac-ba2a-8a1def9516ac"
+    db = await db
+    user = await db.update_user_prop(user_id, "allow_send_email", True)
     return UserResponse(
         id=str(user.id),
         login=user.login,
@@ -86,22 +84,19 @@ async def get_access_token(user_id: str | None = None) -> str:
 )
 async def register(
     data: UserRequest = Body(default=None),
-    db: Session = Depends(get_db),
+    db: DBService = Depends(get_db_service),
     queue: QueueService = Depends(get_queue_service),
 ) -> UserResponse:
-    db.add(
-        User(
-            login=data.login,
+    db = await db
+    await db.add_user(login=data.login,
             password=data.password,
             email=data.email,
             fullname=data.fullname,
             phone=data.phone,
-            subscribed=False,
-        )
+            subscribed=False
     )
-    db.commit()
-    user = db.query(User).filter_by(login=data.login).all()[0]
-    template = db.query(Template).filter_by(name="welcome").all()[0]
+    user = await db.get_user_by_login(data.login)
+    template = await db.get_template_by_name("welcome")
     email = getattr(user, "email")
     url = f"{settings.notify_app.confirmed_url}/{email}/{datetime.now() + timedelta(hours=1)}/google.com"
     short_url = await make_tiny(url)
@@ -151,14 +146,15 @@ async def confirmed(
     email: str,
     expire_time: str,
     redirect_url: str,
-    db: Session = Depends(get_db),
+    db: DBService = Depends(get_db_service),
 ) -> RedirectResponse:
     exp: datetime = datetime.strptime(expire_time, "%Y-%m-%d %H:%M:%S.%f")
     if datetime.now() > exp:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Превышено время ожидания")
-    user = db.query(User).filter_by(email=email).all()[0]
-    setattr(user, "confirmed_email", True)
-    db.commit()
+    db = await db
+    user = await db.get_user_by_email(email)
+    user_id = getattr((user, "email"))
+    await db.update_user_prop(user_id, "allow_send_email", True)
     return RedirectResponse(f"http://{redirect_url}")
 
 
