@@ -24,5 +24,6 @@ async def get_db() -> AsyncSession:
     return SessionLocal()
 
 
-async def get_db_service() -> DBService:
+@lru_cache()
+def get_db_service() -> DBService:
     return DBService(db)
