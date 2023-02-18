@@ -80,8 +80,7 @@ class Notification(BaseModel):
             "type": self.notif_type.value,
             "priority": self.priority.value,
             "recipients": [
-                #{"email": r.email, "fullname": r.fullname, "phone": r.phone, "data": r.data, "timezone": r.timezone}
-                {"email": r.email, "fullname": r.fullname, "phone": r.phone, "data": r.data}
+                {"email": r.email, "fullname": r.fullname, "phone": r.phone, "data": r.data, "timezone": r.timezone}
                 for r in self.recipients
             ],
         }

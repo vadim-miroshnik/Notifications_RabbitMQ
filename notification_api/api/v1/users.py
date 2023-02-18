@@ -33,15 +33,13 @@ router = APIRouter()
     summary="Разрешить/запретить рассылку",
     description="Разрешить/запретить рассылку",
     tags=["users"],
-    #dependencies=[Depends(auth)],
+    dependencies=[Depends(auth)],
 )
 async def enable_notifications(
     request: Request,
     db: DBService = Depends(get_db_service),
 ) -> UserResponse:
-    #user_id = request.state.user_id
-    user_id = "96d9707e-0600-4eac-ba2a-8a1def9516ac"
-    db = await db
+    user_id = request.state.user_id
     user = await db.update_user_prop(user_id, "allow_send_email", True)
     return UserResponse(
         id=str(user.id),
@@ -87,7 +85,6 @@ async def register(
     db: DBService = Depends(get_db_service),
     queue: QueueService = Depends(get_queue_service),
 ) -> UserResponse:
-    db = await db
     await db.add_user(login=data.login,
             password=data.password,
             email=data.email,
@@ -151,7 +148,6 @@ async def confirmed(
     exp: datetime = datetime.strptime(expire_time, "%Y-%m-%d %H:%M:%S.%f")
     if datetime.now() > exp:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Превышено время ожидания")
-    db = await db
     user = await db.get_user_by_email(email)
     user_id = getattr((user, "email"))
     await db.update_user_prop(user_id, "allow_send_email", True)

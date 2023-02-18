@@ -50,7 +50,7 @@ class User(Base):
     confirmed_email = Column(Boolean)
     created_at = Column(TIMESTAMP)
     updated_at = Column(TIMESTAMP)
-    #timezone = Column(Integer)
+    timezone = Column(Integer)
     groups = relationship(
         "NotificationGroup",
         secondary=user_notification,
@@ -69,7 +69,7 @@ class User(Base):
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()
         self.confirmed_email = False
-        #self.timezone = timezone
+        self.timezone = timezone
 
     @property
     def as_dict(self) -> dict:
@@ -78,5 +78,5 @@ class User(Base):
             "fullname": self.fullname,
             "email": self.email,
             "phone": self.phone,
-            #"timezone": self.timezone,
+            "timezone": self.timezone,
         }

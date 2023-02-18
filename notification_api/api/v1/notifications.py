@@ -37,22 +37,18 @@ router = APIRouter()
 async def add_person_notification(
     request: Request,
     data: NotifRequest = Body(default=None),
-    #db: Session = Depends(get_db),
     db: DBService = Depends(get_db_service),
     queue: QueueService = Depends(get_queue_service),
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
     user_id = request.state.user_id
-    db = await db
     user = await db.get_user(user_id)
-    #user = db.query(User).filter_by(id=data.user_id).all()[0]
     if not getattr(user, "allow_send_email"):
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail="Пользователь не подписан на получение уведомлений",
         )
     template = await db.get_template(data.template_id)
-    #template = db.query(Template).filter_by(id=data.template_id).all()[0]
     id = str(uuid.uuid4())
     email = getattr(user, "email")
     url = f"{settings.notify_app.reply_url}/{id}/{email}"
@@ -99,9 +95,6 @@ async def add_group_notifications(
     service: NotificationsService = Depends(get_mongodb_notifications),
 ) -> NotifResponse:
     id = str(uuid.uuid4())
-    data.group_id = "558955f1-354d-4895-99b3-dafab00f3cf0"
-    data.template_id = "5e1f60d1-dc9c-4bdc-a78a-0fd79860536c"
-    db = await db
     template = await db.get_template(data.template_id)
     links = await db.get_users_by_group(data.group_id)
     recipients = []

@@ -1,5 +1,4 @@
 from functools import lru_cache
-from fastapi import Depends
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -25,9 +24,5 @@ async def get_db() -> AsyncSession:
 
 
 @lru_cache()
-async def get_db_service(
-    session: AsyncSession = Depends(get_db),
-) -> DBService:
-    service = DBService()
-    service.settings(session)
-    return service
+def get_db_service() -> DBService:
+    return DBService(db)
