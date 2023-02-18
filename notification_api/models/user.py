@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, String, Table, Integer
+from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, String, Table, Integer, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -10,8 +10,8 @@ from db.postgres import Base
 user_notification = Table(
     "UserNotificationUserGroup",
     Base.metadata,
-    Column("id", primary_key=True),
-    Column("user_id", ForeignKey("user.id"), primary_key=False),
+    Column("id", Text(length=36), primary_key=True),
+    Column("user_id", Text(length=36), ForeignKey("user.id"), primary_key=False),
     Column(
         "notification_user_group_id",
         ForeignKey("notificationgroup.id"),
@@ -23,9 +23,9 @@ user_notification = Table(
 class NotificationGroup(Base):
     __tablename__ = "notificationgroup"
     id = Column(
-        UUID(as_uuid=True),
+        Text(length=36),
         primary_key=True,
-        default=uuid.uuid4,
+        default=str(uuid.uuid4()),
         unique=True,
         nullable=False,
     )
@@ -35,9 +35,9 @@ class NotificationGroup(Base):
 class User(Base):
     __tablename__ = "user"
     id = Column(
-        UUID(as_uuid=True),
+        Text(length=36),
         primary_key=True,
-        default=uuid.uuid4,
+        default=str(uuid.uuid4()),
         unique=True,
         nullable=False,
     )
