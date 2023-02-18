@@ -65,7 +65,7 @@ class NotificationGroup(UUIDMixin):
     class Meta:
         db_table = 'content"."notificationgroup'
         verbose_name = _("notification_group")
-        verbose_name_plural = _("notification_group_plural")
+        verbose_name_plural = _("notification_groups")
 
 
 class User(UUIDMixin, TimeStampedMixin):
@@ -87,7 +87,7 @@ class User(UUIDMixin, TimeStampedMixin):
     class Meta:
         db_table = 'content"."user'
         verbose_name = _("user")
-        verbose_name_plural = _("user_plural")
+        verbose_name_plural = _("users")
 
 
 class UserNotificationGroup(UUIDMixin, TimeStampedCreateMixin):
@@ -104,7 +104,7 @@ class UserNotificationGroup(UUIDMixin, TimeStampedCreateMixin):
             ),
         ]
         verbose_name = _("user_notification_group")
-        verbose_name_plural = _("user_notification_group_plural")
+        verbose_name_plural = _("user_notification_groups")
 
 
 class Template(UUIDMixin):
@@ -130,4 +130,4 @@ class Template(UUIDMixin):
     class Meta:
         db_table = 'content"."template'
         verbose_name = _("template")
-        verbose_name_plural = _("template_plural")
+        verbose_name_plural = _("templates")
