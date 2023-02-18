@@ -8,7 +8,7 @@ from core.config import settings
 from db.postgres import db
 
 from db.queue import get_rabbitmq, close_rabbitmq
-
+from db import mongodb
 
 app = FastAPI(
     title=settings.project_name,
