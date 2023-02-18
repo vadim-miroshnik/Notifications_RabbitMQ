@@ -18,6 +18,8 @@ from models.user import User, user_notification
 from services.notifications import NotificationsService
 from storage.queue import QueueService
 from .schemas import NotifRequest, NotifResponse
+from core.config import settings
+
 
 router = APIRouter()
 
@@ -52,7 +54,7 @@ async def add_person_notification(
     template = db.query(Template).filter_by(id=data.template_id).all()[0]
     id = str(uuid.uuid4())
     email = getattr(user, "email")
-    url = f"http://0.0.0.0:8000/api/v1/notifications/reply/{id}/{email}"
+    url = f"{settings.notify_app.reply_url}/{id}/{email}"
     short_url = make_tiny(url)
     notification = Notification(
         id=id,
@@ -103,7 +105,7 @@ async def add_group_notifications(
         user = db.query(User).filter_by(id=l.user_id).first()
         if getattr(user, "allow_send_email"):
             email = getattr(user, "email")
-            url = f"http://0.0.0.0:8000/api/v1/notifications/reply/{id}/{email}"
+            url = f"{settings.notify_app.reply_url}/{id}/{email}"
             short_url = make_tiny(url)
             recipient = Recipient(
                 email=email,

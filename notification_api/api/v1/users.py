@@ -19,6 +19,8 @@ from models.template import Template
 from models.user import User
 from storage.queue import QueueService
 from .schemas import UserRequest, UserResponse
+from core.config import settings
+
 
 router = APIRouter()
 
@@ -102,7 +104,7 @@ async def register(
     user = db.query(User).filter_by(login=data.login).all()[0]
     template = db.query(Template).filter_by(name="welcome").all()[0]
     email = getattr(user, "email")
-    url = f"http://0.0.0.0:8000/api/v1/users/confirmed/{email}/{datetime.now() + timedelta(hours=1)}/google.com"
+    url = f"{settings.notify_app.confirmed_url}/{email}/{datetime.now() + timedelta(hours=1)}/google.com"
     short_url = make_tiny(url)
     notification = Notification(
         id=str(uuid.uuid4()),
