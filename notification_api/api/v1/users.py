@@ -1,10 +1,9 @@
-import contextlib
+import httpx
 import datetime
 import uuid
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from urllib.parse import urlencode
-from urllib.request import urlopen
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
@@ -105,7 +104,7 @@ async def register(
     template = db.query(Template).filter_by(name="welcome").all()[0]
     email = getattr(user, "email")
     url = f"{settings.notify_app.confirmed_url}/{email}/{datetime.now() + timedelta(hours=1)}/google.com"
-    short_url = make_tiny(url)
+    short_url = await make_tiny(url)
     notification = Notification(
         id=str(uuid.uuid4()),
         template=getattr(template, "template"),
@@ -163,7 +162,8 @@ async def confirmed(
     return RedirectResponse(f"http://{redirect_url}")
 
 
-def make_tiny(url):
+async def make_tiny(url):
     request_url = "http://tinyurl.com/api-create.php?" + urlencode({"url": url})
-    with contextlib.closing(urlopen(request_url)) as response:
-        return response.read().decode("utf-8 ")
+    async with httpx.AsyncClient() as client:
+        response = await client.get(request_url)
+        return response.text

@@ -1,9 +1,8 @@
-import contextlib
+import httpx
 import datetime
 import uuid
 from http import HTTPStatus
 from urllib.parse import urlencode
-from urllib.request import urlopen
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
@@ -55,7 +54,7 @@ async def add_person_notification(
     id = str(uuid.uuid4())
     email = getattr(user, "email")
     url = f"{settings.notify_app.reply_url}/{id}/{email}"
-    short_url = make_tiny(url)
+    short_url = await make_tiny(url)
     notification = Notification(
         id=id,
         template=getattr(template, "template"),
@@ -106,7 +105,7 @@ async def add_group_notifications(
         if getattr(user, "allow_send_email"):
             email = getattr(user, "email")
             url = f"{settings.notify_app.reply_url}/{id}/{email}"
-            short_url = make_tiny(url)
+            short_url = await make_tiny(url)
             recipient = Recipient(
                 email=email,
                 fullname=getattr(user, "fullname"),
@@ -153,7 +152,8 @@ async def reply_from_user(
     return NotifResponse(user_id=user_id, notif_id=id, notif_dt=datetime.datetime.now())
 
 
-def make_tiny(url):
+async def make_tiny(url):
     request_url = "http://tinyurl.com/api-create.php?" + urlencode({"url": url})
-    with contextlib.closing(urlopen(request_url)) as response:
-        return response.read().decode("utf-8 ")
+    async with httpx.AsyncClient() as client:
+        response = await client.get(request_url)
+        return response.text
