@@ -4,18 +4,21 @@ from fastapi import Depends
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from services.notifications import NotificationsService
-from storage.mongodb import get_collection
+from storage.mongodb import Mongodb
 
-mongodb: AsyncIOMotorClient | None = None
 
-# todo env variables
-mongodb = AsyncIOMotorClient(
-    "mongodb://mongos1:27017/?serverSelectionTimeoutMS=2000&directConnection=true&uuidRepresentation=standard"
-)
+mongoclient: AsyncIOMotorClient | None = None
+
+
+async def get_mongodb() -> AsyncIOMotorClient:
+    return mongoclient
 
 
 @lru_cache()
 def get_mongodb_notifications(
-    mongo: AsyncIOMotorClient = Depends(get_collection(mongodb, "movies", "notifications"))
+    client: AsyncIOMotorClient = Depends(get_mongodb),
+    db: str = "movies",
+    coll: str = "notifications"
 ) -> NotificationsService:
+    mongo: Mongodb = Mongodb(client, db, coll)
     return NotificationsService(mongo)
