@@ -1,4 +1,3 @@
-# import pika
 import uvicorn
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
@@ -6,12 +5,10 @@ from fastapi.responses import ORJSONResponse
 
 from api.v1 import notifications, users
 from core.config import settings
-from db import mongodb
 from db.postgres import db
+
 from db.queue import get_rabbitmq, close_rabbitmq
-
-# from pika import BlockingConnection
-
+from db import mongodb
 
 app = FastAPI(
     title=settings.project_name,
@@ -54,7 +51,7 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     close_rabbitmq()
-    db.close()
+    await db.close()
     await mongodb.mongodb.close()
 
 

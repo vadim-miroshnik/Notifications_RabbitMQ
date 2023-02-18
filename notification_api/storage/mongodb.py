@@ -10,6 +10,7 @@ class Mongodb(Storage):
         self.coll = coll
 
     async def insert(self, item: dict) -> dict:
+        print(self.mongodb)
         return await self.mongodb[self.db][self.coll].insert_one(item)
 
     async def select(self, item: dict) -> dict:
@@ -24,7 +25,3 @@ class Mongodb(Storage):
     async def select_items(self, fltr: dict, **kwargs) -> list:
         cursor = await self.mongodb[self.db][self.coll].find(fltr)
         return list(cursor)
-
-
-def get_collection(client: AsyncIOMotorClient, db: str, coll: str) -> Mongodb:
-    return Mongodb(client, db, coll)
