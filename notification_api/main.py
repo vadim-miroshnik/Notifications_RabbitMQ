@@ -8,7 +8,7 @@ from api.v1 import notifications, users
 from core.config import settings
 from db import mongodb
 from db.postgres import db
-from db.queue import rabbitmq
+from db.queue import get_rabbitmq, close_rabbitmq
 
 # from pika import BlockingConnection
 
@@ -48,22 +48,19 @@ app.openapi = custom_openapi
 
 @app.on_event("startup")
 async def startup_event():
-    # todo use env variables
-    # credentials = pika.PlainCredentials("guest", "guest")
-    # rabbitmq = pika.BlockingConnection(
-    #    pika.ConnectionParameters(host=settings.rabbit.host, port=settings.rabbit.port, credentials=credentials)
-    # )
-    pass
+    get_rabbitmq()
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    rabbitmq.close()
+    close_rabbitmq()
     db.close()
     await mongodb.mongodb.close()
 
 
-app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
+app.include_router(
+    notifications.router, prefix="/api/v1/notifications", tags=["notifications"]
+)
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 
 
