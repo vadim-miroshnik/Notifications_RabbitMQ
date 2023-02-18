@@ -24,10 +24,5 @@ async def get_db() -> AsyncSession:
     return SessionLocal()
 
 
-@lru_cache()
-async def get_db_service(
-    session: AsyncSession = Depends(get_db),
-) -> DBService:
-    service = DBService()
-    service.settings(session)
-    return service
+async def get_db_service() -> DBService:
+    return DBService(db)
