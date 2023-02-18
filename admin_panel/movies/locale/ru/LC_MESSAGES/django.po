@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-13 13:13+0000\n"
+"POT-Creation-Date: 2023-02-18 07:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -56,106 +56,107 @@ msgstr "Фильм"
 msgid "films"
 msgstr "Фильмы"
 
-#: movies/models.py:59 movies/models.py:79
+#: movies/models.py:60 movies/models.py:80
 msgid "notification_group_name"
 msgstr "Имя группы уведомления"
 
-#: movies/models.py:66 movies/models.py:95
+#: movies/models.py:67 movies/models.py:96
 msgid "notification_group"
 msgstr "Группы уведомления"
 
-#: movies/models.py:67
-msgid "notification_group_plural"
-msgstr "Группы уведомления"
+#: movies/models.py:68
+msgid "notification_groups"
+msgstr "Группы уведомлений"
 
-#: movies/models.py:71
+#: movies/models.py:72
 msgid "fullname"
 msgstr "Полное имя"
 
-#: movies/models.py:72
+#: movies/models.py:73
 msgid "login"
 msgstr "Логин"
 
-#: movies/models.py:73
+#: movies/models.py:74
 msgid "password"
 msgstr "Пароль"
 
-#: movies/models.py:74
+#: movies/models.py:75
 msgid "user_email"
 msgstr "Почта"
 
-#: movies/models.py:75
+#: movies/models.py:76
 msgid "user_phone"
 msgstr "Номер телефона"
 
-#: movies/models.py:76
+#: movies/models.py:77
 msgid "allow_send_email"
 msgstr "Разрешить отправку почты"
 
-#: movies/models.py:77
+#: movies/models.py:78
 msgid "confirmed_email"
 msgstr "Подтвержденная почта"
 
-#: movies/models.py:81
+#: movies/models.py:82
 msgid "timezone"
 msgstr "Часовой пояс"
 
-#: movies/models.py:88 movies/models.py:93
+#: movies/models.py:89 movies/models.py:94
 msgid "user"
 msgstr "Пользователь"
 
-#: movies/models.py:89
-msgid "user_plural"
+#: movies/models.py:90
+msgid "users"
 msgstr "Пользователи"
 
-#: movies/models.py:105
+#: movies/models.py:106
 msgid "user_notification_group"
 msgstr "Группа уведомления"
 
-#: movies/models.py:106
-msgid "user_notification_group_plural"
-msgstr "Группы уведомления"
+#: movies/models.py:107
+msgid "user_notification_groups"
+msgstr "Группы уведомлений"
 
-#: movies/models.py:111
+#: movies/models.py:112
 msgid "email"
 msgstr "Почта"
 
-#: movies/models.py:112
+#: movies/models.py:113
 msgid "push"
 msgstr "Пуш"
 
-#: movies/models.py:113
+#: movies/models.py:114
 msgid "sms"
 msgstr "СМС"
 
-#: movies/models.py:116
+#: movies/models.py:117
 msgid "low"
 msgstr "низкий"
 
-#: movies/models.py:117
+#: movies/models.py:118
 msgid "medium"
 msgstr "обычный"
 
-#: movies/models.py:118
+#: movies/models.py:119
 msgid "high"
 msgstr "высокий"
 
-#: movies/models.py:120
+#: movies/models.py:121
 msgid "template_name"
 msgstr "Имя шаблона"
 
-#: movies/models.py:121 movies/models.py:127
+#: movies/models.py:122 movies/models.py:132
 msgid "template"
 msgstr "Шаблон"
 
-#: movies/models.py:122
+#: movies/models.py:124
 msgid "type"
 msgstr "Типы"
 
-#: movies/models.py:123
+#: movies/models.py:127
 msgid "priority"
 msgstr "Приоритет"
 
-#: movies/models.py:128
-msgid "template_plural"
+#: movies/models.py:133
+msgid "templates"
 msgstr "Шаблоны"
+
