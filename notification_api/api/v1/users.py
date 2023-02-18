@@ -41,7 +41,6 @@ async def enable_notifications(
 ) -> UserResponse:
     #user_id = request.state.user_id
     user_id = "96d9707e-0600-4eac-ba2a-8a1def9516ac"
-    db = await db
     user = await db.update_user_prop(user_id, "allow_send_email", True)
     return UserResponse(
         id=str(user.id),
