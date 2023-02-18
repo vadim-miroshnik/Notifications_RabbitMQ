@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, String, Text
+from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
 
 from db.postgres import Base
@@ -9,9 +9,9 @@ from db.postgres import Base
 class Template(Base):
     __tablename__ = "template"
     id = Column(
-        Text(length=36),
+        UUID(as_uuid=True),
         primary_key=True,
-        default=str(uuid.uuid4()),
+        default=uuid.uuid4,
         unique=True,
         nullable=False,
     )
