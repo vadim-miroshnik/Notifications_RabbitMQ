@@ -45,12 +45,12 @@ app.openapi = custom_openapi
 
 @app.on_event("startup")
 async def startup_event():
-    get_rabbitmq()
+    await get_rabbitmq()
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    close_rabbitmq()
+    await close_rabbitmq()
     await db.close()
     await mongodb.mongodb.close()
 
