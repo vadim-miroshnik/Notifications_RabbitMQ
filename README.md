@@ -1,7 +1,3 @@
-# Проектная работа 10 спринта
-
-https://github.com/dimkaddi/notifications_sprint_1
-
 Запуск окружения (Postgres, MongoDB, RabbitMQ):
 
     make run_environment
