@@ -1,15 +1,4 @@
-Запуск окружения (Postgres, MongoDB, RabbitMQ):
 
-    make run_environment
-Запуск БД Postgres:
-
-    make run_postgres
-Удаление базы данных:
-
-    make drop_db
-Создание суперпользователя Django:
-
-    make create_django_superuser
 ## Панель администратора
 
 Через панель администратора осуществляется ввод пользователей, групп рассылки и шаблонов для генерации содержимого сообщений
@@ -71,3 +60,17 @@
 Остановка всех контейнеров:
 
     make down
+
+## Запуск
+Запуск окружения (Postgres, MongoDB, RabbitMQ):
+
+    make run_environment
+Запуск БД Postgres:
+
+    make run_postgres
+Удаление базы данных:
+
+    make drop_db
+Создание суперпользователя Django:
+
+    make create_django_superuser
